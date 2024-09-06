@@ -1,29 +1,33 @@
 import { StyleSheet } from "react-native";
 
-export const padBackgroundColor = "#00000033";
-export const padBorderColor = "#5D3FD366";
+export const padBackgroundColor = "#FFFFFF";
+export const padBorderColor = "#EE0000C0";
+export const knobBackgroundColor = "#EE0000C0";
+export const knobBorderColor = "#EE0000D0";
+export const stickBackgroundColor = "#EE000090";
+export const stickBorderColor = "#EE0000A0";
 
 export const AxisPadStyles = StyleSheet.create({
     pad: {
         backgroundColor: padBackgroundColor,
         borderColor: padBorderColor,
-        borderWidth: 1.5,
+        borderWidth: 2.5,
     },
     controlKnob: {
-        backgroundColor: "#7F00FF44",
-        borderColor: padBorderColor,
+        backgroundColor: knobBackgroundColor,
+        borderColor: knobBorderColor,
         borderWidth: 1.5,
     },
     largeStick: {
         width: 40,
-        backgroundColor: padBackgroundColor,
-        borderColor: "#00000066",
+        backgroundColor: stickBackgroundColor,
+        borderColor: stickBorderColor,
         borderWidth: 1,
     },
     smallStick: {
         width: 20,
-        backgroundColor: padBackgroundColor,
-        borderColor: "#00000066",
+        backgroundColor: stickBackgroundColor,
+        borderColor: stickBorderColor,
         borderWidth: 1,
     },
 });

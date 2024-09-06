@@ -1,13 +1,39 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { AxisPad, AxisPadProps, AxisPadTouchEvent } from "@fustaro/react-native-axis-pad";
-import { padBackgroundColor, padBorderColor } from "../styles/DefaultStyles";
+import { padBorderColor } from "../styles/DefaultStyles";
+
+
+const styles = StyleSheet.create({
+    wrapper: {
+        alignItems: "center",
+        borderRadius: 8,
+        borderWidth: 1.5,
+        borderColor: "#00000033",
+        padding: 4,
+        paddingTop: 0,
+    },
+    wrapperActive: {
+        borderColor: padBorderColor,
+    },
+    textWrapper: {
+        marginBottom: 4,
+        paddingHorizontal: 12,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
+        backgroundColor: "#00000033",
+    },
+    textWrapperActive: {
+        backgroundColor: padBorderColor,
+    },
+});
+
 
 function pointDetailsText(x: number, y: number) {
     return `X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`;
 }
 
-export function AxisPadWithValueText(props: Omit<AxisPadProps, "onTouchEvent">) {
+export function Joystick(props: Omit<AxisPadProps, "onTouchEvent">) {
     const [active, setActive] = useState(false);
     const [text, setText] = useState(pointDetailsText(0, 0));
 
@@ -32,31 +58,10 @@ export function AxisPadWithValueText(props: Omit<AxisPadProps, "onTouchEvent">) 
             <View style={textWrapperStyle}>
                 <Text>{text}</Text>
             </View>
-            <AxisPad {...props} onTouchEvent={onTouchEvent} />
+            <AxisPad
+                {...props}
+                onTouchEvent={onTouchEvent}
+            />
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    wrapper: {
-        alignItems: "center",
-        borderRadius: 8,
-        borderWidth: 1.5,
-        borderColor: padBackgroundColor,
-        padding: 4,
-        paddingTop: 0,
-    },
-    wrapperActive: {
-        borderColor: padBorderColor,
-    },
-    textWrapper: {
-        marginBottom: 4,
-        paddingHorizontal: 12,
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8,
-        backgroundColor: padBackgroundColor,
-    },
-    textWrapperActive: {
-        backgroundColor: padBorderColor,
-    },
-});
