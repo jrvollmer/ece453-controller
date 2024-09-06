@@ -31,3 +31,18 @@ export const AxisPadStyles = StyleSheet.create({
         borderWidth: 1,
     },
 });
+
+export const ButtonStyles = StyleSheet.create({
+    released: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: "#EE0000"
+    },
+    pressed: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: "#AA0000"
+    }
+})

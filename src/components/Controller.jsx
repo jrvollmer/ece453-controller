@@ -1,8 +1,8 @@
 import "react";
-import { StyleSheet, View, StatusBar, SafeAreaView } from 'react-native';
+import {StyleSheet, View, Text, StatusBar, SafeAreaView, Button, Pressable} from 'react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Joystick } from "./Joystick";
-import { AxisPadStyles } from "../styles/DefaultStyles";
+import {AxisPadStyles, ButtonStyles, padBorderColor} from "../styles/DefaultStyles";
 
 
 const styles = StyleSheet.create({
@@ -12,10 +12,10 @@ const styles = StyleSheet.create({
     },
     padContainer: {
         flex: 1,
-        flexDirection: "column",
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly",
-    },
+    }
 });
 
 
@@ -35,6 +35,15 @@ export default function Controller() {
                         stickStyle={AxisPadStyles.largeStick}
                         keepControlCompletelyInPadBounds={true} // TODO Not completely sure how I feel about this
                     />
+                    <View style={{flex: 0.5}}/>
+                    <Pressable
+                        // onPress={() => {
+                        //     setTimesPressed(current => current + 1);
+                        // }}
+                        style={({pressed}) => [
+                            pressed ? ButtonStyles.pressed : ButtonStyles.released
+                        ]}>
+                    </Pressable>
                 </View>
             </GestureHandlerRootView>
         </SafeAreaView>
