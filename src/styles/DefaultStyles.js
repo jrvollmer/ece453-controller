@@ -4,6 +4,7 @@ export const padBackgroundColor = "#FFFFFF";
 export const padBorderColor = "#EE0000C0";
 export const knobBackgroundColor = "#EE0000C0";
 export const knobBorderColor = "#EE0000D0";
+export const smallKnobSize = 60;
 export const stickBackgroundColor = "#EE000090";
 export const stickBorderColor = "#EE0000A0";
 

@@ -1,7 +1,7 @@
 import "react";
 import {StyleSheet, View, StatusBar, SafeAreaView} from 'react-native';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {AxisPadStyles,} from "../styles/DefaultStyles";
+import {AxisPadStyles, smallKnobSize} from "../styles/DefaultStyles";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
 
@@ -35,19 +35,39 @@ export default function Controller() {
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <View style={styles.padContainer}>
                     <Joystick
-                        id={"car-joystick"}
-                        size={250}
+                        id={"car-joystick-y"}
+                        disableX={true}
                         stepSize={0}
-                        padBackgroundStyle={AxisPadStyles.pad}
-                        controlStyle={AxisPadStyles.controlKnob}
-                        ignoreTouchDownInPadArea={false}
+                        size={250}
+                        controlSize={smallKnobSize}
                         initialTouchType={"snap"}
-                        stickStyle={AxisPadStyles.largeStick}
-                        keepControlCompletelyInPadBounds={true} // TODO Not completely sure how I feel about this
+                        ignoreTouchDownInPadArea={false}
+                        keepControlCompletelyInPadBounds={true}
+                        padBackgroundStyle={{...AxisPadStyles.pad, marginHorizontal: 32.5}}
+                        controlStyle={AxisPadStyles.controlKnob}
+                        stickStyle={AxisPadStyles.smallStick}
                     />
                     <View style={{flex: 0.5}}/>
-                    <ActionButton onBegin={beginPress} onEnd={endPress} text="1"/>
-                    <ActionButton onBegin={beginPress} onEnd={endPress} text="2"/>
+                    <View style={{flexDirection: "column", rowGap: 25, alignItems: "center"}}>
+                        <ActionButton
+                            onBegin={beginPress}
+                            onEnd={endPress}
+                            text="I"
+                        />
+                        <Joystick
+                            id={"car-joystick-x"}
+                            disableY={true}
+                            stepSize={0}
+                            size={250}
+                            controlSize={smallKnobSize}
+                            initialTouchType={"snap"}
+                            ignoreTouchDownInPadArea={false}
+                            keepControlCompletelyInPadBounds={true}
+                            padBackgroundStyle={AxisPadStyles.pad}
+                            controlStyle={AxisPadStyles.controlKnob}
+                            stickStyle={AxisPadStyles.smallStick}
+                        />
+                    </View>
                 </View>
             </GestureHandlerRootView>
         </SafeAreaView>
