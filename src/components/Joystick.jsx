@@ -29,16 +29,19 @@ const styles = StyleSheet.create({
 });
 
 
-function pointDetailsText(x: number, y: number) {
-    return `X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`;
+function pointDetailsText(x: number, y: number, disableX: boolean, disableY: boolean) {
+    const xStr = `X: ${x.toFixed(2)}`
+    const yStr = `Y: ${y.toFixed(2)}`
+    return disableX ? yStr : (disableY ? xStr : `${xStr}, ${yStr}`)
 }
 
 export default function Joystick(props: Omit<AxisPadProps, "onTouchEvent">) {
     const [active, setActive] = useState(false);
-    const [text, setText] = useState(pointDetailsText(0, 0));
+    const [text, setText] = useState(pointDetailsText(0, 0, props.disableX, props.disableY));
 
     const onTouchEvent = (touch: AxisPadTouchEvent) => {
-        setText(pointDetailsText(touch.ratio.x, touch.ratio.y));
+        // NOTE: Y is negated due to unintuitive interpretations of y-axis signs
+        setText(pointDetailsText(touch.ratio.x, -touch.ratio.y, props.disableX, props.disableY));
 
         if (touch.eventType === "start") {
             setActive(true);
