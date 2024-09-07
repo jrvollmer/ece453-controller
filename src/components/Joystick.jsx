@@ -18,6 +18,9 @@ export default function Joystick(props: Omit<AxisPadProps, "onTouchEvent">) {
         // NOTE: Y is negated due to unintuitive interpretations of y-axis signs
         setText(pointDetailsText(touch.ratio.x, -touch.ratio.y, props.disableX, props.disableY));
 
+        // TODO Add a callback prop for sending x and/or y to the car
+        //  *** MAKE SURE TO NEGATE Y BEFORE SENDING SO THAT IT MATCHES THE READOUTS ***
+
         if (touch.eventType === "start") {
             setActive(true);
         } else if (touch.eventType === "end") {

@@ -8,12 +8,21 @@ import ActionButton from "./ActionButton";
 
 
 export default function Controller() {
+    // TODO Connect to a car via BLE
+    //      Potential flow:
+    //          - RC cars start pairing on startup
+    //          - App has a main landing page with a list of available cars
+    //          - User selects a car and connects
+    //          - Move to controller page, displaying car name at the top of the screen
+
     const beginPress = () => {
         console.log("Begin Press")
+        // TODO Could probably remove this, unless we want to enable holding items behind the car (i.e. shielding)
     }
 
     const endPress = () => {
         console.log("End Press")
+        // TODO Send command via BLE to the car
     }
 
     return (
@@ -49,7 +58,7 @@ export default function Controller() {
                                 aspectRatio: 1,
                                 resizeMode: "contain",
                             }}
-                            source={blueShellImg}
+                            source={blueShellImg} // TODO Update according to actual item held
                         />
                     </View>
                     <View style={{flexDirection: "column", rowGap: 25, alignItems: "center"}}>
