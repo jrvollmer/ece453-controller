@@ -4,6 +4,7 @@ import {Text, View} from "react-native";
 import {buttonStyles} from "../styles/DefaultStyles";
 
 
+// Credit to https://stackoverflow.com/a/77499348
 export default function ActionButton({
     onBegin,
     onEnd,
