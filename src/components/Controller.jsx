@@ -1,7 +1,7 @@
 import "react";
 import {StyleSheet, View, Image, StatusBar, SafeAreaView} from 'react-native';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {AxisPadStyles, padBorderColor, smallKnobSize} from "../styles/DefaultStyles";
+import {axisPadStyles, padBorderColor, smallKnobSize} from "../styles/DefaultStyles";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
 
@@ -44,9 +44,9 @@ export default function Controller() {
                         initialTouchType={"snap"}
                         ignoreTouchDownInPadArea={false}
                         keepControlCompletelyInPadBounds={true}
-                        padBackgroundStyle={{...AxisPadStyles.pad, marginHorizontal: 32.5}}
-                        controlStyle={AxisPadStyles.controlKnob}
-                        stickStyle={AxisPadStyles.smallStick}
+                        padBackgroundStyle={{...axisPadStyles.pad, marginHorizontal: 32.5}}
+                        controlStyle={axisPadStyles.controlKnob}
+                        stickStyle={axisPadStyles.smallStick}
                     />
                     <View
                         style={{
@@ -82,9 +82,9 @@ export default function Controller() {
                             initialTouchType={"snap"}
                             ignoreTouchDownInPadArea={false}
                             keepControlCompletelyInPadBounds={true}
-                            padBackgroundStyle={AxisPadStyles.pad}
-                            controlStyle={AxisPadStyles.controlKnob}
-                            stickStyle={AxisPadStyles.smallStick}
+                            padBackgroundStyle={axisPadStyles.pad}
+                            controlStyle={axisPadStyles.controlKnob}
+                            stickStyle={axisPadStyles.smallStick}
                         />
                     </View>
                 </View>

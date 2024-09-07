@@ -8,7 +8,7 @@ export const smallKnobSize = 60;
 export const stickBackgroundColor = "#EE000090";
 export const stickBorderColor = "#EE0000A0";
 
-export const AxisPadStyles = StyleSheet.create({
+export const axisPadStyles = StyleSheet.create({
     pad: {
         backgroundColor: padBackgroundColor,
         borderColor: padBorderColor,
@@ -33,36 +33,40 @@ export const AxisPadStyles = StyleSheet.create({
     },
 });
 
-export const ButtonStyles = StyleSheet.create({
+
+const buttonBaseStyle = {
+    button: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    text: {
+        fontFamily: "serif",
+        fontSize: 72,
+        fontWeight: "bold"
+    }
+}
+
+export const buttonStyles = StyleSheet.create({
     button: {
         released: {
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            backgroundColor: "#EE0000",
-            justifyContent: "center",
-            alignItems: "center"
+            ...buttonBaseStyle.button,
+            backgroundColor: "#EE0000"
         },
         pressed: {
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            backgroundColor: "#AA0000",
-            justifyContent: "center",
-            alignItems: "center"
+            ...buttonBaseStyle.button,
+            backgroundColor: "#AA0000"
         }
     },
     text: {
         released: {
-            fontFamily: "serif",
-            fontSize: 48,
-            fontWeight: "bold",
+            ...buttonBaseStyle.text,
             color: "#F8F8F8"
         },
         pressed: {
-            fontFamily: "serif",
-            fontSize: 48,
-            fontWeight: "bold",
+            ...buttonBaseStyle.text,
             color: "#D8D8D8"
         }
     }

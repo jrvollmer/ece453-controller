@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Gesture, GestureDetector} from "react-native-gesture-handler";
 import {Text, View} from "react-native";
-import {ButtonStyles} from "../styles/DefaultStyles";
+import {buttonStyles} from "../styles/DefaultStyles";
 
 
 export default function ActionButton({
@@ -34,12 +34,12 @@ export default function ActionButton({
         <GestureDetector gesture={tapGesture}>
             <View
                 collapsable={false}
-                style={isPressed ? ButtonStyles.button.pressed : ButtonStyles.button.released}
+                style={isPressed ? buttonStyles.button.pressed : buttonStyles.button.released}
             >
                 {
                     text.length > 0
                     ?
-                        <Text style={isPressed ? ButtonStyles.text.pressed : ButtonStyles.text.released}>
+                        <Text style={isPressed ? buttonStyles.text.pressed : buttonStyles.text.released}>
                             {text}
                         </Text>
                     :
