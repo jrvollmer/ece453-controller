@@ -1,32 +1,7 @@
-import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { AxisPad, AxisPadProps, AxisPadTouchEvent } from "@fustaro/react-native-axis-pad";
-import { padBorderColor } from "../styles/DefaultStyles";
-
-
-const styles = StyleSheet.create({
-    wrapper: {
-        alignItems: "center",
-        borderRadius: 8,
-        borderWidth: 1.5,
-        borderColor: "#00000033",
-        padding: 4,
-        paddingTop: 0,
-    },
-    wrapperActive: {
-        borderColor: padBorderColor,
-    },
-    textWrapper: {
-        marginBottom: 4,
-        paddingHorizontal: 12,
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8,
-        backgroundColor: "#00000033",
-    },
-    textWrapperActive: {
-        backgroundColor: padBorderColor,
-    },
-});
+import {useState} from "react";
+import {Text, View} from "react-native";
+import {AxisPad, AxisPadProps, AxisPadTouchEvent} from "@fustaro/react-native-axis-pad";
+import {axisPadStyles} from "../styles/DefaultStyles";
 
 
 function pointDetailsText(x: number, y: number, disableX: boolean, disableY: boolean) {
@@ -50,11 +25,13 @@ export default function Joystick(props: Omit<AxisPadProps, "onTouchEvent">) {
         }
     };
 
-    const wrapperStyle = active ? [styles.wrapper, styles.wrapperActive] : styles.wrapper;
+    const wrapperStyle = active
+        ? [axisPadStyles.wrapper, axisPadStyles.wrapperActive]
+        : axisPadStyles.wrapper;
 
     const textWrapperStyle = active
-        ? [styles.textWrapper, styles.textWrapperActive]
-        : styles.textWrapper;
+        ? [axisPadStyles.textWrapper, axisPadStyles.textWrapperActive]
+        : axisPadStyles.textWrapper;
 
     return (
         <View style={wrapperStyle}>

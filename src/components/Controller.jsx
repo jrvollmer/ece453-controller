@@ -1,25 +1,10 @@
 import "react";
-import {StyleSheet, View, Image, StatusBar, SafeAreaView} from 'react-native';
+import {View, Image, SafeAreaView} from 'react-native';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {axisPadStyles, padBorderColor, smallKnobSize} from "../styles/DefaultStyles";
+import {axisPadStyles, containerStyles, padBorderColor, smallKnobSize} from "../styles/DefaultStyles";
+import {blueShellImg} from "../Images";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
-
-
-const styles = StyleSheet.create({
-    pageContainer: {
-        paddingTop: StatusBar.currentHeight || 0,
-        flex: 1,
-    },
-    padContainer: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-    }
-});
-
-const blueShellImg = require("../../assets/images/blue-shell.png");
 
 
 export default function Controller() {
@@ -32,9 +17,9 @@ export default function Controller() {
     }
 
     return (
-        <SafeAreaView style={styles.pageContainer}>
+        <SafeAreaView style={containerStyles.pageContainer}>
             <GestureHandlerRootView style={{ flex: 1 }}>
-                <View style={styles.padContainer}>
+                <View style={containerStyles.padContainer}>
                     <Joystick
                         id={"car-joystick-y"}
                         disableX={true}

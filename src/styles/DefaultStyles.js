@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import {StatusBar, StyleSheet} from "react-native";
 
 export const padBackgroundColor = "#FFFFFF";
 export const padBorderColor = "#EE0000C0";
@@ -7,6 +7,7 @@ export const knobBorderColor = "#EE0000D0";
 export const smallKnobSize = 60;
 export const stickBackgroundColor = "#EE000090";
 export const stickBorderColor = "#EE0000A0";
+
 
 export const axisPadStyles = StyleSheet.create({
     pad: {
@@ -31,6 +32,27 @@ export const axisPadStyles = StyleSheet.create({
         borderColor: stickBorderColor,
         borderWidth: 1,
     },
+    wrapper: {
+        alignItems: "center",
+        borderRadius: 8,
+        borderWidth: 1.5,
+        borderColor: "#EE000040",
+        padding: 4,
+        paddingTop: 0,
+    },
+    wrapperActive: {
+        borderColor: "#EE000090",
+    },
+    textWrapper: {
+        marginBottom: 4,
+        paddingHorizontal: 12,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
+        backgroundColor: "#EE000040",
+    },
+    textWrapperActive: {
+        backgroundColor: "#EE000090",
+    },
 });
 
 
@@ -47,7 +69,7 @@ const buttonBaseStyle = {
         fontSize: 72,
         fontWeight: "bold"
     }
-}
+};
 
 export const buttonStyles = StyleSheet.create({
     button: {
@@ -70,4 +92,18 @@ export const buttonStyles = StyleSheet.create({
             color: "#D8D8D8"
         }
     }
-})
+});
+
+
+export const containerStyles = StyleSheet.create({
+    pageContainer: {
+        paddingTop: StatusBar.currentHeight || 0,
+        flex: 1,
+    },
+    padContainer: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+    }
+});
