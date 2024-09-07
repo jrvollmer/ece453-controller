@@ -33,7 +33,7 @@ function pointDetailsText(x: number, y: number) {
     return `X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`;
 }
 
-export function Joystick(props: Omit<AxisPadProps, "onTouchEvent">) {
+export default function Joystick(props: Omit<AxisPadProps, "onTouchEvent">) {
     const [active, setActive] = useState(false);
     const [text, setText] = useState(pointDetailsText(0, 0));
 

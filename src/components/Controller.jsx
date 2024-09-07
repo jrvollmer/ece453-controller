@@ -1,8 +1,9 @@
 import "react";
-import {StyleSheet, View, Text, StatusBar, SafeAreaView, Button, Pressable} from 'react-native';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Joystick } from "./Joystick";
-import {AxisPadStyles, ButtonStyles, padBorderColor} from "../styles/DefaultStyles";
+import {StyleSheet, View, StatusBar, SafeAreaView} from 'react-native';
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {AxisPadStyles,} from "../styles/DefaultStyles";
+import Joystick from "./Joystick";
+import ActionButton from "./ActionButton";
 
 
 const styles = StyleSheet.create({
@@ -20,6 +21,15 @@ const styles = StyleSheet.create({
 
 
 export default function Controller() {
+
+    const beginPress = () => {
+        console.log("Begin Press")
+    }
+
+    const endPress = () => {
+        console.log("End Press")
+    }
+
     return (
         <SafeAreaView style={styles.pageContainer}>
             <GestureHandlerRootView style={{ flex: 1 }}>
@@ -36,14 +46,8 @@ export default function Controller() {
                         keepControlCompletelyInPadBounds={true} // TODO Not completely sure how I feel about this
                     />
                     <View style={{flex: 0.5}}/>
-                    <Pressable
-                        // onPress={() => {
-                        //     setTimesPressed(current => current + 1);
-                        // }}
-                        style={({pressed}) => [
-                            pressed ? ButtonStyles.pressed : ButtonStyles.released
-                        ]}>
-                    </Pressable>
+                    <ActionButton onBegin={beginPress} onEnd={endPress} text="1"/>
+                    <ActionButton onBegin={beginPress} onEnd={endPress} text="2"/>
                 </View>
             </GestureHandlerRootView>
         </SafeAreaView>

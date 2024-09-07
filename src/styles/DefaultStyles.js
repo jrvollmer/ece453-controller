@@ -33,16 +33,34 @@ export const AxisPadStyles = StyleSheet.create({
 });
 
 export const ButtonStyles = StyleSheet.create({
-    released: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: "#EE0000"
+    button: {
+        released: {
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            backgroundColor: "#EE0000",
+            justifyContent: "center",
+            alignItems: "center"
+        },
+        pressed: {
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            backgroundColor: "#AA0000",
+            justifyContent: "center",
+            alignItems: "center"
+        }
     },
-    pressed: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: "#AA0000"
+    text: {
+        released: {
+            fontSize: 48,
+            fontWeight: "bold",
+            color: "#F8F8F8"
+        },
+        pressed: {
+            fontSize: 48,
+            fontWeight: "bold",
+            color: "#D8D8D8"
+        }
     }
 })
