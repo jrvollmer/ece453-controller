@@ -54,11 +54,13 @@ export const ButtonStyles = StyleSheet.create({
     },
     text: {
         released: {
+            fontFamily: "serif",
             fontSize: 48,
             fontWeight: "bold",
             color: "#F8F8F8"
         },
         pressed: {
+            fontFamily: "serif",
             fontSize: 48,
             fontWeight: "bold",
             color: "#D8D8D8"
