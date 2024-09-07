@@ -1,7 +1,7 @@
 import "react";
-import {StyleSheet, View, StatusBar, SafeAreaView} from 'react-native';
+import {StyleSheet, View, Image, StatusBar, SafeAreaView} from 'react-native';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {AxisPadStyles, smallKnobSize} from "../styles/DefaultStyles";
+import {AxisPadStyles, padBorderColor, smallKnobSize} from "../styles/DefaultStyles";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
 
@@ -19,9 +19,10 @@ const styles = StyleSheet.create({
     }
 });
 
+const blueShellImg = require("../../assets/images/blue-shell.png");
+
 
 export default function Controller() {
-
     const beginPress = () => {
         console.log("Begin Press")
     }
@@ -47,7 +48,25 @@ export default function Controller() {
                         controlStyle={AxisPadStyles.controlKnob}
                         stickStyle={AxisPadStyles.smallStick}
                     />
-                    <View style={{flex: 0.5}}/>
+                    <View
+                        style={{
+                            flex: 0.5,
+                            borderColor: padBorderColor,
+                            borderWidth: 5,
+                            borderRadius: 50,
+                            padding: 10
+                        }}
+                    >
+                        <Image
+                            style={{
+                                width: "100%",
+                                height: undefined,
+                                aspectRatio: 1,
+                                resizeMode: "contain",
+                            }}
+                            source={blueShellImg}
+                        />
+                    </View>
                     <View style={{flexDirection: "column", rowGap: 25, alignItems: "center"}}>
                         <ActionButton
                             onBegin={beginPress}
