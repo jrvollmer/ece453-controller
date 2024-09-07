@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "mario-kart",
-    "slug": "mario-kart",
-    "version": "1.0.0",
+    "name": "ece453-mario-kart-controller",
+    "slug": "ece453-mario-kart-controller",
+    "version": "0.0.0",
     "orientation": "landscape",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
