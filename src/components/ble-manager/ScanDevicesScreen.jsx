@@ -359,8 +359,9 @@ const ScanDevicesScreen = () => {
                     </Pressable>
                 </View>
 
-                {Platform.OS === 'android' &&
-            (<>
+                {
+                    Platform.OS === 'android' &&
+                        (<>
                             <View style={styles.buttonGroup}>
                                 <Pressable style={styles.scanButton} onPress={startCompanionScan}>
                                     <Text style={styles.scanButtonText}>
@@ -382,7 +383,8 @@ const ScanDevicesScreen = () => {
                                     </Text>
                                 </Pressable>
                             </View>
-                        </>)}
+                        </>)
+                }
 
                 {Array.from(peripherals.values()).length === 0 && (<View style={styles.row}>
                         <Text style={styles.noPeripherals}>
