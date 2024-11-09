@@ -97,7 +97,7 @@ export const buttonStyles = StyleSheet.create({
 
 export const containerStyles = StyleSheet.create({
     pageContainer: {
-        paddingTop: StatusBar.currentHeight || 0,
+        // TODO REMOVE Not sure why I ever had this: paddingTop: StatusBar.currentHeight || 0,
         flex: 1,
     },
     padContainer: {

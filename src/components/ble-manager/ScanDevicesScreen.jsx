@@ -43,6 +43,7 @@ const ScanDevicesScreen = () => {
             }
         }
     };
+
     const startCompanionScan = () => {
         setPeripherals(new Map());
         try {
@@ -64,6 +65,7 @@ const ScanDevicesScreen = () => {
             console.error('[startCompanionScan] ble scan error thrown', error);
         }
     };
+
     const enableBluetooth = async () => {
         try {
             console.debug('[enableBluetooth]');
@@ -73,10 +75,12 @@ const ScanDevicesScreen = () => {
             console.error('[enableBluetooth] thrown', error);
         }
     };
+
     const handleStopScan = () => {
         setIsScanning(false);
         console.debug('[handleStopScan] scan is stopped.');
     };
+
     const handleDisconnectedPeripheral = (event) => {
         console.debug(`[handleDisconnectedPeripheral][${event.peripheral}] disconnected.`);
         setPeripherals(map => {
@@ -88,12 +92,15 @@ const ScanDevicesScreen = () => {
             return map;
         });
     };
+
     const handleConnectPeripheral = (event) => {
         console.log(`[handleConnectPeripheral][${event.peripheral}] connected.`);
     };
+
     const handleUpdateValueForCharacteristic = (data) => {
         console.debug(`[handleUpdateValueForCharacteristic] received data from '${data.peripheral}' with characteristic='${data.characteristic}' and value='${data.value}'`);
     };
+
     const handleDiscoverPeripheral = (peripheral) => {
         console.debug('[handleDiscoverPeripheral] new BLE peripheral=', peripheral);
         if (!peripheral.name) {
@@ -103,6 +110,7 @@ const ScanDevicesScreen = () => {
             return new Map(map.set(peripheral.id, peripheral));
         });
     };
+
     const togglePeripheralConnection = async (peripheral) => {
         if (peripheral && peripheral.connected) {
             try {
@@ -116,6 +124,7 @@ const ScanDevicesScreen = () => {
             await connectPeripheral(peripheral);
         }
     };
+
     const retrieveConnected = async () => {
         try {
             const connectedPeripherals = await BleManager.getConnectedPeripherals();
@@ -139,6 +148,7 @@ const ScanDevicesScreen = () => {
             console.error('[retrieveConnected] unable to retrieve connected peripherals.', error);
         }
     };
+
     const retrieveServices = async () => {
         const peripheralInfos = [];
         for (let [peripheralId, peripheral] of peripherals) {
@@ -149,6 +159,7 @@ const ScanDevicesScreen = () => {
         }
         return peripheralInfos;
     };
+
     const readCharacteristics = async () => {
         let services = await retrieveServices();
         for (let peripheralInfo of services) {
@@ -163,6 +174,7 @@ const ScanDevicesScreen = () => {
             });
         }
     };
+
     const getAssociatedPeripherals = async () => {
         try {
             const associatedPeripherals = await BleManager.getAssociatedPeripherals();
@@ -177,6 +189,7 @@ const ScanDevicesScreen = () => {
             console.error('[getAssociatedPeripherals] unable to retrieve associated peripherals.', error);
         }
     };
+
     const connectPeripheral = async (peripheral) => {
         try {
             if (peripheral) {
@@ -245,9 +258,11 @@ const ScanDevicesScreen = () => {
             console.error(`[connectPeripheral][${peripheral.id}] connectPeripheral error`, error);
         }
     };
+
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
     useEffect(() => {
         try {
             BleManager.start({ showAlert: false })
@@ -274,6 +289,7 @@ const ScanDevicesScreen = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
     const handleAndroidPermissions = () => {
         if (Platform.OS === 'android' && Platform.Version >= 31) {
             PermissionsAndroid.requestMultiple([
@@ -306,6 +322,7 @@ const ScanDevicesScreen = () => {
             });
         }
     };
+
     const renderItem = ({ item }) => {
         const backgroundColor = item.connected ? '#069400' : Colors.white;
         return (<TouchableHighlight underlayColor="#0082FC" onPress={() => togglePeripheralConnection(item)}>
@@ -320,6 +337,7 @@ const ScanDevicesScreen = () => {
                 </View>
             </TouchableHighlight>);
     };
+
     return (<>
             <StatusBar />
             <SafeAreaView style={styles.body}>
@@ -377,6 +395,8 @@ const ScanDevicesScreen = () => {
             </SafeAreaView>
         </>);
 };
+
+
 const boxShadow = {
     shadowColor: '#000',
     shadowOffset: {
@@ -387,6 +407,7 @@ const boxShadow = {
     shadowRadius: 3.84,
     elevation: 5,
 };
+
 const styles = StyleSheet.create({
     engine: {
         position: 'absolute',
@@ -472,4 +493,6 @@ const styles = StyleSheet.create({
         color: Colors.white,
     },
 });
+
+
 export default ScanDevicesScreen;

@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Text, View} from "react-native";
 import {AxisPad, AxisPadProps, AxisPadTouchEvent} from "@fustaro/react-native-axis-pad";
-import {axisPadStyles} from "../styles/DefaultStyles";
+import {axisPadStyles} from "../../styles/DefaultStyles";
 
 
 function pointDetailsText(x: number, y: number, disableX: boolean, disableY: boolean) {
