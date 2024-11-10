@@ -161,7 +161,7 @@ function CarSelectScreen(props) {
 
 
     const renderItem = ({ item }) => {
-        const backgroundColor = item.connected ? '#069400' : Colors.white;
+        const backgroundColor = item.connected ? '#e30909' : Colors.white;
         return (
             <TouchableHighlight underlayColor="#0082FC" onPress={() => connectAndNavigate(item)}>
                 <View style={[styles.row, { backgroundColor }]}>
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 16,
         paddingHorizontal: 16,
-        backgroundColor: '#0a398a',
+        backgroundColor: '#8a0a0a',
         margin: 10,
         borderRadius: 12,
         ...boxShadow,
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
         color: Colors.white,
     },
     body: {
-        backgroundColor: '#0082FC',
+        backgroundColor: '#fc0000',
         flex: 1,
     },
     sectionContainer: {
