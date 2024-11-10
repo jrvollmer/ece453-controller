@@ -1,5 +1,8 @@
 import {PermissionsAndroid, Platform} from "react-native";
+import BleManager from 'react-native-ble-manager';
+
 import {sleep} from "./generic";
+
 
 export function handleAndroidPermissions() {
     if (Platform.OS === 'android' && Platform.Version >= 31) {
@@ -98,4 +101,58 @@ export async function connectPeripheral(peripheralId, setPeripherals, BleManager
     } catch (error) {
         console.error(`[connectPeripheral][${peripheralId}] connectPeripheral error`, error);
     }
+}
+
+// Credit: https://medium.com/@varunkukade999/part-3-bluetooth-low-energy-ble-in-react-native-07e30995c169
+export async function subscribeToNotification(deviceId, characteristicUUID, serviceUUID) {
+    const connected = await BleManager.isPeripheralConnected(deviceId, [serviceUUID]);
+    if (!connected) {
+        console.warn("[subscribeToNotification] Not connected")
+        return false;
+    }
+
+    // Get the services and characteristics information for the connected hardware device.
+    const peripheralInformation = await BleManager.retrieveServices(deviceId);
+    // Check for supported services and characteristics from device info
+    const deviceSupportedServices = (peripheralInformation.services || []).map(item => item?.uuid?.toUpperCase());
+    const deviceSupportedCharacteristics = (peripheralInformation.characteristics || []).map(_char =>
+        _char.characteristic.toUpperCase(),
+    );
+    if (
+        !deviceSupportedServices.includes(serviceUUID) ||
+        !deviceSupportedCharacteristics.includes(characteristicUUID)
+    ) {
+        // Required service ID and characteristic ID are not supported by hardware
+        await BleManager.disconnect(deviceId);
+        console.warn('Connected device does not have required service and characteristic');
+        console.warn('service', serviceUUID, "not in", deviceSupportedServices);
+        console.warn('characteristic', characteristicUUID, "not in", deviceSupportedCharacteristics);
+        return false;
+    }
+
+    return await BleManager
+        .startNotification(deviceId, serviceUUID, characteristicUUID)
+        .then(response => {
+            console.debug('Started notification successfully on ', characteristicUUID);
+            return true;
+        })
+        .catch(async () => {
+            await BleManager.disconnect(deviceId);
+            console.warn('Failed to start notification on required service and characteristic');
+            return false;
+        });
+}
+
+export const ServiceUUIDs = {
+    RCController: '335244E1-792B-4B7C-AFC8-AB9B90F0E0BB',
+}
+
+export const CharacteristicUUIDs = {
+    // Read/Write characteristics
+    JoystickX: 'AB7E0F0E-8934-497A-89E7-81A447C929D2',
+    JoystickY: '98FFEAA2-8CA2-4BAA-8FA3-210CB52FE787',
+    UseItem: 'A36B4769-EA50-4219-BA37-B2099C860B8B',
+    // Read/Notify characteristics
+    GetItem: '7795A0A0-E497-4A32-9794-93FBE1FBCBB5',
+    Lap: '9513A035-86F2-4A31-92F7-52F4A947D767',
 }

@@ -144,12 +144,15 @@ function ControllerScreen(props) {
 
     return (
         <SafeAreaView style={containerStyles.pageContainer}>
+            {/* TODO Show car name at the top of the screen */}
             <Button
                 // TODO At the end of the game, have a modal at the end of each game to show results and allow going back
                 title={"Back"}
                 onPress={goBackToCarSelect}
             />
-            <Controller/>
+            <Controller
+                peripheralId={peripheralData.id}
+            />
         </SafeAreaView>
     );
 }

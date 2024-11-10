@@ -16,14 +16,25 @@ import {Colors} from "react-native/Libraries/NewAppScreen";
 
 import {containerStyles} from "../../styles/DefaultStyles";
 import BleManager, {BleScanCallbackType, BleScanMatchMode, BleScanMode} from "react-native-ble-manager";
-import {connectPeripheral, handleAndroidPermissions} from "../../helpers/ble";
+import {
+    connectPeripheral,
+    handleAndroidPermissions,
+    subscribeToNotification,
+    CharacteristicUUIDs,
+    ServiceUUIDs
+} from "../../helpers/ble";
 import PeripheralsContext from "../../contexts/BlePeripherals";
 
 
 // Scanning constants
 const SECONDS_TO_SCAN_FOR = 3;
-const SERVICE_UUIDS = ["335244E1-792B-4B7C-AFC8-AB9B90F0E0BB"]; // RC Controller service
 const ALLOW_DUPLICATES = true;
+const SERVICE_UUIDS = [ServiceUUIDs.RCController];
+const NOTIFICATION_CHARACTERISTIC_UUIDS = [
+    CharacteristicUUIDs.GetItem,
+    CharacteristicUUIDs.Lap,
+];
+
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
@@ -63,9 +74,13 @@ function CarSelectScreen(props) {
 
     const connectAndNavigate = async (peripheral) => {
         const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager);
-        if (peripheralData) {
+        let subscribed = true;
+        for (const characteristicUUID of NOTIFICATION_CHARACTERISTIC_UUIDS) {
+            subscribed &&= await subscribeToNotification(peripheral.id, characteristicUUID, SERVICE_UUIDS[0]);
+        }
+        if (peripheralData && subscribed) {
             navigation.navigate('Controller', {
-                peripheralData: peripheralData,
+                peripheralData: peripheralData
             });
         } else {
             console.warn("[connectAndNavigate] Failed to connect")
@@ -129,6 +144,7 @@ function CarSelectScreen(props) {
 
             // TODO Use BleManager.checkState() to check if Bluetooth is enabled (and block further actions)
             // TODO For android (Platform.OS === 'android'), I can just use BleManager.enableBluetooth()
+            // TODO See this for a good example app with android and ios: https://medium.com/@varunkukade999/part-1-bluetooth-low-energy-ble-in-react-native-694758908dc2
 
             startScan();
             console.debug('[useFocusEffect] Past startScan call');
