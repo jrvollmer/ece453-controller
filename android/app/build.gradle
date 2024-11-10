@@ -109,9 +109,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.jvollmer.ece453mariokartcontroller'
+    namespace 'com.jvollmer.buckykartcontroller'
     defaultConfig {
-        applicationId 'com.jvollmer.ece453mariokartcontroller'
+        applicationId 'com.jvollmer.buckykartcontroller'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

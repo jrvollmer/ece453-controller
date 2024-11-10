@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ece453-mario-kart-controller",
-    "slug": "ece453-mario-kart-controller",
+    "name": "bucky-kart-controller",
+    "slug": "bucky-kart-controller",
     "version": "0.0.0",
     "orientation": "landscape",
     "icon": "./assets/images/icon.png",
@@ -13,14 +13,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jvollmer.buckykartcontroller"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jvollmer.ece453mariokartcontroller"
+      "package": "com.jvollmer.buckykartcontroller"
     },
     "web": {
       "bundler": "metro",

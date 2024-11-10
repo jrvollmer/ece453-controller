@@ -1,5 +1,5 @@
 {
-  "name": "ece453-mario-kart-controller",
+  "name": "bucky-kart-controller",
   "main": "node_modules/expo/AppEntry.js",
   "version": "0.0.0",
   "scripts": {

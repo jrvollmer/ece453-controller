@@ -1,4 +1,4 @@
-package com.jvollmer.ece453mariokartcontroller
+package com.jvollmer.buckykartcontroller
 
 import android.app.Application
 import android.content.res.Configuration

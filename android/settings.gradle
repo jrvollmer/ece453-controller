@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'ece453-mario-kart-controller'
+rootProject.name = 'bucky-kart-controller'
 
 dependencyResolutionManagement {
   versionCatalogs {
