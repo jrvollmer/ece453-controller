@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from 'react';
-import {BackHandler, Button, NativeEventEmitter, NativeModules, SafeAreaView} from 'react-native'; // TODO BackHandler might be Android specific
+import {BackHandler, Button, NativeEventEmitter, NativeModules, Platform, SafeAreaView} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 
 import {containerStyles} from "../../styles/DefaultStyles";
@@ -82,14 +82,15 @@ function ControllerScreen(props) {
 
     useFocusEffect(
         useCallback(() => {
-            // Override the default built-in status bar back button behavior
-            // TODO This might be Android specific
+            // Override the built-in status bar back button default behavior (Android only)
             const onBackPress = () => {
                 console.log("Pressed back")
                 // true to disable going back; false to allow default behavior (going back)
                 return true;
             };
-            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+            if (Platform.OS === 'android') {
+                BackHandler.addEventListener('hardwareBackPress', onBackPress);
+            }
 
             try {
                 BleManager.start({ showAlert: false })
@@ -106,7 +107,9 @@ function ControllerScreen(props) {
             handleAndroidPermissions();
 
             return () => {
-                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+                if (Platform.OS === 'android') {
+                    BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+                }
                 console.debug('[controller] controller unmounting. Removing listeners...');
                 for (const listener of bleListeners) {
                     listener.remove();
