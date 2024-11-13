@@ -38,8 +38,10 @@ export function handleAndroidPermissions() {
 }
 
 export async function connectPeripheral(peripheralId, setPeripherals, BleManager) {
+    console.log("Connecting");
     try {
         if (peripheralId) {
+            console.log("Peripheral has id:", peripheralId);
             setPeripherals(map => {
                 let p = map.get(peripheralId);
                 if (p) {
@@ -48,6 +50,8 @@ export async function connectPeripheral(peripheralId, setPeripherals, BleManager
                 }
                 return map;
             });
+            console.log("Set peripherals");
+
             await BleManager.connect(peripheralId);
             console.debug(`[connectPeripheral][${peripheralId}] connected.`);
             setPeripherals(map => {
