@@ -15,7 +15,7 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 
 import {containerStyles} from "../../styles/DefaultStyles";
-import BleManager, {BleScanCallbackType, BleScanMatchMode, BleScanMode} from "react-native-ble-manager";
+import BleManager, {BleScanCallbackType, BleScanMatchMode, BleScanMode, BleState} from "react-native-ble-manager";
 import {
     connectPeripheral,
     handleAndroidPermissions,
@@ -29,10 +29,10 @@ import PeripheralsContext from "../../contexts/BlePeripherals";
 // Scanning constants
 const SECONDS_TO_SCAN_FOR = 3;
 const ALLOW_DUPLICATES = true;
-const SERVICE_UUIDS = [ServiceUUIDs.RCController];
+const SERVICE_UUIDS = [ServiceUUIDs.RCController.toUpperCase()];
 const NOTIFICATION_CHARACTERISTIC_UUIDS = [
-    CharacteristicUUIDs.GetItem,
-    CharacteristicUUIDs.Lap,
+    CharacteristicUUIDs.GetItem.toUpperCase(),
+    CharacteristicUUIDs.Lap.toUpperCase(),
 ];
 
 const BleManagerModule = NativeModules.BleManager;
@@ -47,6 +47,22 @@ function CarSelectScreen(props) {
     // ------------------------------------------------------------------------------------------------------------
     // Press callbacks and associated helpers
     // ------------------------------------------------------------------------------------------------------------
+    const handleBleOnLoad = async () => {
+        // TODO
+        const connectedPeripherals = await BleManager.getConnectedPeripherals().then((p) => {
+            console.log("periph:", p);
+            return p;
+        }); // TODO [ServiceUUIDs.RCController]);
+        console.log("Connected peripherals at start:", connectedPeripherals);
+        if (connectedPeripherals.length > 0) {
+            navigation.navigate('Controller', {
+                peripheralData: peripheralData
+            });
+        } else {
+            startScan();
+        }
+    }
+
     const startScan = () => {
         if (!isScanning) {
             // Reset found peripherals before scan
@@ -73,7 +89,7 @@ function CarSelectScreen(props) {
     };
 
     const connectAndNavigate = async (peripheral) => {
-        const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager);
+        const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager, BleManagerEmitter);
         let subscribed = true;
         for (const characteristicUUID of NOTIFICATION_CHARACTERISTIC_UUIDS) {
             subscribed &&= await subscribeToNotification(peripheral.id, characteristicUUID, SERVICE_UUIDS[0]);
@@ -124,21 +140,34 @@ function CarSelectScreen(props) {
 
     useFocusEffect(
         React.useCallback(() => {
-            try {
-                BleManager.start({ showAlert: false })
-                    .then(() => console.debug('BleManager started.'))
-                    .catch((error) => console.error('BleManager could not be started.', error));
-            }
-            catch (error) {
-                console.error('unexpected error starting BleManager.', error);
-                return;
-            }
+            // TODO
+            // try {
+            //     BleManager.start({ showAlert: false })
+            //         .then(() => console.debug('BleManager started.'))
+            //         .catch((error) => console.error('BleManager could not be started.', error));
+            // }
+            // catch (error) {
+            //     console.error('unexpected error starting BleManager.', error);
+            //     return;
+            // }
             console.debug('Adding listeners for car select')
             const listeners = [
                 BleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral),
                 BleManagerEmitter.addListener('BleManagerStopScan', handleStopScan),
                 BleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral),
                 BleManagerEmitter.addListener('BleManagerConnectPeripheral', handleConnectPeripheral),
+                BleManagerEmitter.addListener('BleManagerDidUpdateState', async (args) => {
+                    console.log("Updated state to", args.state)
+                    if (args.state === BleState.On) {
+                        console.log("we're on baby");
+                        const connectedPeripherals = await BleManager.getConnectedPeripherals().then((p) => {
+                            console.log("periph 2:", p);
+                            return p;
+                        }); // TODO [ServiceUUIDs.RCController]);
+                        console.log("Connected peripherals at start 2:", connectedPeripherals);
+
+                    }
+                }),
             ];
             handleAndroidPermissions();
 
@@ -146,7 +175,8 @@ function CarSelectScreen(props) {
             // TODO For android (Platform.OS === 'android'), I can just use BleManager.enableBluetooth()
             // TODO See this for a good example app with android and ios: https://medium.com/@varunkukade999/part-1-bluetooth-low-energy-ble-in-react-native-694758908dc2
 
-            startScan();
+            handleBleOnLoad();
+            // TODO startScan();
             console.debug('[useFocusEffect] Past startScan call');
 
             return () => {

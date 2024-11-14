@@ -1,5 +1,5 @@
 import "react";
-import {View, Image} from 'react-native';
+import {View, Image, Platform} from 'react-native';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {useEffect, useRef, useState} from "react";
 import BleManager from "react-native-ble-manager";
@@ -9,6 +9,14 @@ import {blueShellImg} from "../../Images";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
 import {CharacteristicUUIDs, ServiceUUIDs} from "../../helpers/ble";
+
+
+// TODO REMOVE
+// const RC_CONTROLLER_SERVICE_UUID_PLATFORM_CORRECTED = (
+//     Platform.OS === 'android' ?
+//     ServiceUUIDs.RCController :
+//     ServiceUUIDs.RCController.toLowerCase()
+// );
 
 
 function floatToByteArray(float) {
@@ -53,12 +61,14 @@ function Controller(props) {
         console.log('X', joyXRef.current);
         console.log('Y', joyYRef.current);
         console.log('X_array', joyXArray);
-        console.log('Y_array', joyYArray);
+        console.log('Y_array', joyYArray); 
+
         await BleManager.writeWithoutResponse(
             props.peripheralId,
             ServiceUUIDs.RCController,
             CharacteristicUUIDs.JoystickX,
-            joyXArray
+            joyXArray,
+            maxByteSize = 4,
         )
             .then(() => {
                 console.log('Joystick x write success');
@@ -70,7 +80,8 @@ function Controller(props) {
             props.peripheralId,
             ServiceUUIDs.RCController,
             CharacteristicUUIDs.JoystickY,
-            joyYArray
+            joyYArray,
+            maxByteSize = 4,
         )
             .then(() => {
                 console.log('Joystick y write success');
