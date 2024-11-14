@@ -29,10 +29,10 @@ import PeripheralsContext from "../../contexts/BlePeripherals";
 // Scanning constants
 const SECONDS_TO_SCAN_FOR = 3;
 const ALLOW_DUPLICATES = true;
-const SERVICE_UUIDS = [ServiceUUIDs.RCController.toUpperCase()];
+const SERVICE_UUIDS = [ServiceUUIDs.RCController];
 const NOTIFICATION_CHARACTERISTIC_UUIDS = [
-    CharacteristicUUIDs.GetItem.toUpperCase(),
-    CharacteristicUUIDs.Lap.toUpperCase(),
+    CharacteristicUUIDs.GetItem,
+    CharacteristicUUIDs.Lap,
 ];
 
 const BleManagerModule = NativeModules.BleManager;
@@ -48,12 +48,6 @@ function CarSelectScreen(props) {
     // Press callbacks and associated helpers
     // ------------------------------------------------------------------------------------------------------------
     const handleBleOnLoad = async () => {
-        // TODO
-        const connectedPeripherals = await BleManager.getConnectedPeripherals().then((p) => {
-            console.log("periph:", p);
-            return p;
-        }); // TODO [ServiceUUIDs.RCController]);
-        console.log("Connected peripherals at start:", connectedPeripherals);
         if (connectedPeripherals.length > 0) {
             navigation.navigate('Controller', {
                 peripheralData: peripheralData
@@ -89,7 +83,7 @@ function CarSelectScreen(props) {
     };
 
     const connectAndNavigate = async (peripheral) => {
-        const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager, BleManagerEmitter);
+        const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager);
         let subscribed = true;
         for (const characteristicUUID of NOTIFICATION_CHARACTERISTIC_UUIDS) {
             subscribed &&= await subscribeToNotification(peripheral.id, characteristicUUID, SERVICE_UUIDS[0]);
@@ -140,16 +134,6 @@ function CarSelectScreen(props) {
 
     useFocusEffect(
         React.useCallback(() => {
-            // TODO
-            // try {
-            //     BleManager.start({ showAlert: false })
-            //         .then(() => console.debug('BleManager started.'))
-            //         .catch((error) => console.error('BleManager could not be started.', error));
-            // }
-            // catch (error) {
-            //     console.error('unexpected error starting BleManager.', error);
-            //     return;
-            // }
             console.debug('Adding listeners for car select')
             const listeners = [
                 BleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral),

@@ -1,5 +1,5 @@
 import "react";
-import {View, Image, Platform} from 'react-native';
+import {View, Image} from 'react-native';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {useEffect, useRef, useState} from "react";
 import BleManager from "react-native-ble-manager";
@@ -9,14 +9,6 @@ import {blueShellImg} from "../../Images";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
 import {CharacteristicUUIDs, ServiceUUIDs} from "../../helpers/ble";
-
-
-// TODO REMOVE
-// const RC_CONTROLLER_SERVICE_UUID_PLATFORM_CORRECTED = (
-//     Platform.OS === 'android' ?
-//     ServiceUUIDs.RCController :
-//     ServiceUUIDs.RCController.toLowerCase()
-// );
 
 
 function floatToByteArray(float) {

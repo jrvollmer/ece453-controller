@@ -92,15 +92,6 @@ function ControllerScreen(props) {
                 BackHandler.addEventListener('hardwareBackPress', onBackPress);
             }
 
-            // TODO
-            // try {
-            //     BleManager.start({ showAlert: false })
-            //         .then(() => console.debug('[controller] BleManager started.'))
-            //         .catch((error) => console.error('[controller] BleManager could not be started.', error));
-            // } catch (error) {
-            //     console.error('[controller] unexpected error starting BleManager.', error);
-            //     return;
-            // }
             const bleListeners = [
                 BleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleCarDisconnect),
                 BleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic),
