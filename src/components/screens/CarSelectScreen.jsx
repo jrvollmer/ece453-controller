@@ -47,15 +47,6 @@ function CarSelectScreen(props) {
     // ------------------------------------------------------------------------------------------------------------
     // Press callbacks and associated helpers
     // ------------------------------------------------------------------------------------------------------------
-    const handleBleOnLoad = async () => {
-        if (connectedPeripherals.length > 0) {
-            navigation.navigate('Controller', {
-                peripheralData: peripheralData
-            });
-        } else {
-            startScan();
-        }
-    }
 
     const startScan = () => {
         if (!isScanning) {
@@ -134,6 +125,19 @@ function CarSelectScreen(props) {
 
     useFocusEffect(
         React.useCallback(() => {
+            // It's great, iOS expects only one BleManager.start call, whereas
+            // Android expects it in every component in which BleManager is used
+            if (Platform.OS === 'android') {
+                try {
+                    BleManager.start({ showAlert: false })
+                              .then(() => console.debug('BleManager started.'))
+                              .catch((error) => console.error('BleManager could not be started.', error));
+                } catch (error) {
+                    console.error('unexpected error starting BleManager.', error);
+                    return;
+                }
+            }
+
             console.debug('Adding listeners for car select')
             const listeners = [
                 BleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral),
@@ -159,9 +163,7 @@ function CarSelectScreen(props) {
             // TODO For android (Platform.OS === 'android'), I can just use BleManager.enableBluetooth()
             // TODO See this for a good example app with android and ios: https://medium.com/@varunkukade999/part-1-bluetooth-low-energy-ble-in-react-native-694758908dc2
 
-            handleBleOnLoad();
-            // TODO startScan();
-            console.debug('[useFocusEffect] Past startScan call');
+            startScan();
 
             return () => {
                 console.debug('[app] main component unmounting. Removing listeners...');

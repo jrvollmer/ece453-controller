@@ -90,6 +90,17 @@ function ControllerScreen(props) {
             };
             if (Platform.OS === 'android') {
                 BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+                // It's great, iOS expects only one BleManager.start call, whereas
+                // Android expects it in every component in which BleManager is used
+                try {
+                    BleManager.start({ showAlert: false })
+                              .then(() => console.debug('BleManager started.'))
+                              .catch((error) => console.error('BleManager could not be started.', error));
+                } catch (error) {
+                    console.error('unexpected error starting BleManager.', error);
+                    return;
+                }
             }
 
             const bleListeners = [
