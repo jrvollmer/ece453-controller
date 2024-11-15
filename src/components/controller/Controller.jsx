@@ -139,7 +139,7 @@ function Controller(props) {
                             resizeMode: "contain",
                             opacity: (itemIndex === 0 ? 0 : 1)
                         }}
-                        source={ItemImages[itemIndex]} // TODO Update according to actual item held
+                        source={ItemImages[itemIndex]}
                     />
                 </View>
                 <View style={{flexDirection: "column", rowGap: 25, alignItems: "center"}}>

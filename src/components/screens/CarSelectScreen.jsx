@@ -143,18 +143,7 @@ function CarSelectScreen(props) {
                 BleManagerEmitter.addListener('BleManagerStopScan', handleStopScan),
                 BleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral),
                 BleManagerEmitter.addListener('BleManagerConnectPeripheral', handleConnectPeripheral),
-                BleManagerEmitter.addListener('BleManagerDidUpdateState', async (args) => {
-                    console.log("Updated state to", args.state)
-                    if (args.state === BleState.On) {
-                        console.log("we're on baby");
-                        const connectedPeripherals = await BleManager.getConnectedPeripherals().then((p) => {
-                            console.log("periph 2:", p);
-                            return p;
-                        }); // TODO [ServiceUUIDs.RCController]);
-                        console.log("Connected peripherals at start 2:", connectedPeripherals);
-
-                    }
-                }),
+                BleManagerEmitter.addListener('BleManagerDidUpdateState', async (args) => {console.log("Updated state to", args.state)}),
             ];
             handleAndroidPermissions();
 

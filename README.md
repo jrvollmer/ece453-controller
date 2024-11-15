@@ -18,7 +18,7 @@ First, have your device plugged in to your laptop via a USB cable.  To build and
 me@my-device:/path/to/bucky-kart-controller$ npx expo run:<android|ios> [--no-build-cache] --device
 ```
 
-To make an apk or <TODO Whatever is distributed for iOS>, run the following:
+To make an apk (Android) or install link (iOS - note, you'll need an Apple Developer Account because Apple is awful and requires a dev account, even to distribute it internally), run the following:
 ```bash
 me@my-device:/path/to/bucky-kart-controller$ eas build --platform <android|ios> --profile <build_option_from_eas.json>
 ```
