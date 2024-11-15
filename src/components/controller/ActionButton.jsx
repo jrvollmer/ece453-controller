@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Gesture, GestureDetector} from "react-native-gesture-handler";
 import {Text, View} from "react-native";
-import {buttonStyles} from "../styles/DefaultStyles";
+import {buttonStyles} from "../../styles/DefaultStyles";
 
 
 // Credit to https://stackoverflow.com/a/77499348
