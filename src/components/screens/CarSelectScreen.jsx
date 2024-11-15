@@ -6,7 +6,6 @@ import {
     Platform,
     Pressable,
     SafeAreaView,
-    StyleSheet,
     Text,
     TouchableHighlight,
     View
@@ -14,7 +13,7 @@ import {
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 
-import {containerStyles} from "../../styles/DefaultStyles";
+import {styles} from "../../styles/DefaultStyles";
 import BleManager, {BleScanCallbackType, BleScanMatchMode, BleScanMode, BleState} from "react-native-ble-manager";
 import {
     connectPeripheral,
@@ -179,7 +178,7 @@ function CarSelectScreen(props) {
     const renderItem = ({ item }) => {
         const backgroundColor = item.connected ? '#e30909' : Colors.white;
         return (
-            <TouchableHighlight underlayColor="#0082FC" onPress={() => connectAndNavigate(item)}>
+            <TouchableHighlight onPress={() => connectAndNavigate(item)}>
                 <View style={[styles.row, { backgroundColor }]}>
                     <Text style={styles.peripheralName}>
                         {/* completeLocalName (item.name) & shortAdvertisingName (advertising.localName) may not always be the same */}
@@ -220,99 +219,6 @@ function CarSelectScreen(props) {
         </SafeAreaView>
     );
 }
-
-// TODO REMOVE This was just copied to avoid the headache of restyling
-const boxShadow = {
-    shadowColor: '#000',
-    shadowOffset: {
-        width: 0,
-        height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-};
-
-const styles = StyleSheet.create({
-    engine: {
-        position: 'absolute',
-        right: 10,
-        bottom: 0,
-        color: Colors.black,
-    },
-    scanButton: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 16,
-        backgroundColor: '#8a0a0a',
-        margin: 10,
-        borderRadius: 12,
-        ...boxShadow,
-    },
-    scanButtonText: {
-        fontSize: 16,
-        letterSpacing: 0.25,
-        color: Colors.white,
-    },
-    body: {
-        backgroundColor: '#fc0000',
-        flex: 1,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    peripheralName: {
-        fontSize: 16,
-        textAlign: 'center',
-        padding: 10,
-    },
-    rssi: {
-        fontSize: 12,
-        textAlign: 'center',
-        padding: 2,
-    },
-    peripheralId: {
-        fontSize: 12,
-        textAlign: 'center',
-        padding: 2,
-        paddingBottom: 20,
-    },
-    row: {
-        marginLeft: 10,
-        marginRight: 10,
-        borderRadius: 20,
-        ...boxShadow,
-    },
-    noPeripherals: {
-        margin: 10,
-        textAlign: 'center',
-        color: Colors.white,
-    },
-});
 
 
 export default CarSelectScreen;

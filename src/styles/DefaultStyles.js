@@ -1,30 +1,27 @@
-import {StatusBar, StyleSheet} from "react-native";
+import {StyleSheet} from "react-native";
+import {Colors} from "react-native/Libraries/NewAppScreen";
 
-export const padBackgroundColor = "#FFFFFF";
-export const padBorderColor = "#EE0000C0";
-export const knobBackgroundColor = "#EE0000C0";
-export const knobBorderColor = "#EE0000D0";
+
+const stickBackgroundColor = "#EE000090";
+const stickBorderColor = "#EE0000A0";
+const red = "#EE0000C0";
+const borderRed = "#EE0000D0";
+const deepRed = "#EE000090";
+const crimson = "#EE000040";
+
 export const smallKnobSize = 60;
-export const stickBackgroundColor = "#EE000090";
-export const stickBorderColor = "#EE0000A0";
-
+export const padBorderColor = red;
 
 export const axisPadStyles = StyleSheet.create({
     pad: {
-        backgroundColor: padBackgroundColor,
-        borderColor: padBorderColor,
+        backgroundColor: "#FFFFFF",
+        borderColor: deepRed,
         borderWidth: 2.5,
     },
     controlKnob: {
-        backgroundColor: knobBackgroundColor,
-        borderColor: knobBorderColor,
+        backgroundColor: deepRed,
+        borderColor: borderRed,
         borderWidth: 1.5,
-    },
-    largeStick: {
-        width: 40,
-        backgroundColor: stickBackgroundColor,
-        borderColor: stickBorderColor,
-        borderWidth: 1,
     },
     smallStick: {
         width: 20,
@@ -36,22 +33,22 @@ export const axisPadStyles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 8,
         borderWidth: 1.5,
-        borderColor: "#EE000040",
+        borderColor: crimson,
         padding: 4,
         paddingTop: 0,
     },
     wrapperActive: {
-        borderColor: "#EE000090",
+        borderColor: deepRed,
     },
     textWrapper: {
         marginBottom: 4,
         paddingHorizontal: 12,
         borderBottomLeftRadius: 8,
         borderBottomRightRadius: 8,
-        backgroundColor: "#EE000040",
+        backgroundColor: crimson,
     },
     textWrapperActive: {
-        backgroundColor: "#EE000090",
+        backgroundColor: deepRed,
     },
 });
 
@@ -106,4 +103,65 @@ export const containerStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-evenly",
     }
+});
+
+
+const boxShadow = {
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+};
+
+export const styles = StyleSheet.create({
+    scanButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 16,
+        paddingHorizontal: 16,
+        backgroundColor: '#8a0a0a',
+        margin: 10,
+        borderRadius: 12,
+        ...boxShadow,
+    },
+    scanButtonText: {
+        fontSize: 16,
+        letterSpacing: 0.25,
+        color: Colors.white,
+    },
+    body: {
+        backgroundColor: '#fc0000',
+        flex: 1,
+    },
+    peripheralName: {
+        fontSize: 16,
+        textAlign: 'center',
+        padding: 10,
+    },
+    rssi: {
+        fontSize: 12,
+        textAlign: 'center',
+        padding: 2,
+    },
+    peripheralId: {
+        fontSize: 12,
+        textAlign: 'center',
+        padding: 2,
+        paddingBottom: 20,
+    },
+    row: {
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: 20,
+        ...boxShadow,
+    },
+    noPeripherals: {
+        margin: 10,
+        textAlign: 'center',
+        color: Colors.white,
+    },
 });
