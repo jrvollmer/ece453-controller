@@ -1,12 +1,20 @@
-import React, {useCallback, useContext} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {BackHandler, Button, NativeEventEmitter, NativeModules, Platform, SafeAreaView} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 
 import {containerStyles} from "../../styles/DefaultStyles";
 import Controller from "../controller/Controller";
 import BleManager from "react-native-ble-manager";
-import {connectPeripheral, handleAndroidPermissions} from "../../helpers/ble";
 import PeripheralsContext from "../../contexts/BlePeripherals";
+import {
+    connectPeripheral,
+    subscribeToNotification,
+    handleAndroidPermissions,
+    ServiceUUIDs,
+    CharacteristicUUIDs,
+    NOTIFICATION_CHARACTERISTIC_UUIDS,
+    BleMessageToItemIndex
+} from "../../helpers/ble";
 import {sleep} from "../../helpers/generic";
 
 
@@ -24,14 +32,24 @@ function ControllerScreen(props) {
     let reconnecting = false;
     const navigation = useNavigation();
     const [peripherals, setPeripherals] = useContext(PeripheralsContext);
+    const [itemIndex, setItemIndex] = useState(0);
 
     const goBackToCarSelect = async () => {
         // Disconnect and go back to the car selection screen
         const p = peripherals.get(peripheralData.id);
-        if (p && p.connected) {
+        if (p && (p.connected || p.connecting)) {
             try {
                 leaving = true;
                 await BleManager.disconnect(peripheralData.id);
+                setPeripherals(map => {
+                    let _p = map.get(peripheralData.id);
+                    if (_p) {
+                        _p.connected = false;
+                        _p.connecting = false;
+                        return new Map(map.set(peripheralData.id, _p));
+                    }
+                    return map;
+                });
             }
             catch (error) {
                 console.error(`[goBackToCarSelect][${peripheralData.id}] error when trying to disconnect device.`, error);
@@ -56,20 +74,30 @@ function ControllerScreen(props) {
             });
             if (!leaving) {
                 reconnecting = true;
+                let tempPeripheralData;
                 // We aren't intending to leave, so try to reconnect
                 for (let i = 0; i < RECONNECT_ATTEMPTS; i++) {
+                    // Reconnect attempt
+                    console.reportErrorsAsExceptions = false; // Don't show disconnect call on app
                     console.debug(`[onCarDisconnect][${i + 1}/${RECONNECT_ATTEMPTS}] Attempting to reconnect`)
-                    peripheralData = await connectPeripheral(peripheralId, setPeripherals, BleManager);
-                    if (peripheralData) {
+                    tempPeripheralData = await connectPeripheral(peripheralId, setPeripherals, BleManager);
+                    console.debug(`[onCarDisconnect][${i + 1}/${RECONNECT_ATTEMPTS}] Passed reconnection attempt with peripheral data ${tempPeripheralData}`)
+                    console.reportErrorsAsExceptions = true; // Reenable exception alerts
+                    if (tempPeripheralData) {
+                        peripheralData = tempPeripheralData;
                         // Wait a second for the next onCarDisconnect call so that we don't unset reconnecting prematurely
                         await sleep(1000);
+                        let subscribed = true;
+                        for (const characteristicUUID of NOTIFICATION_CHARACTERISTIC_UUIDS) {
+                            subscribed &&= await subscribeToNotification(peripheralId, characteristicUUID, ServiceUUIDs.RCController);
+                        }
                         break;
                     }
                     await sleep(RECONNECT_DELAY_MS);
                 }
                 reconnecting = false;
                 // If we failed to reconnect, go back to the selection screen
-                if (!leaving && !peripheralData) {
+                if (!leaving && !tempPeripheralData) {
                     navigation.goBack();
                 }
             }
@@ -77,7 +105,18 @@ function ControllerScreen(props) {
     }
 
     const handleUpdateValueForCharacteristic = (data) => {
-        console.debug(`[handleUpdateValueForCharacteristic] received data from '${data.peripheral}' with characteristic='${data.characteristic}' and value='${data.value}'`);
+        const characteristic = data.characteristic.toUpperCase();
+        console.debug(`[handleUpdateValueForCharacteristic] received data from '${data.peripheral}' with characteristic='${characteristic}' and value='${data.value}'`);
+
+        if (characteristic === CharacteristicUUIDs.GetItem) {
+            // Accept new item if we don't currently have any
+            setItemIndex((currIdx) => {
+                console.debug(`[handleUpdateValueForCharacteristic] (in setter) Got item, curr index ${currIdx}, item ${data.value}`)
+                return currIdx !== 0 ? currIdx : BleMessageToItemIndex[data.value];
+            });
+        } else if (data.characteristic === CharacteristicUUIDs.Lap) {
+            // TODO
+        }
     };
 
     useFocusEffect(
@@ -121,33 +160,6 @@ function ControllerScreen(props) {
         }, [])
     );
 
-
-    // const retrieveServices = async () => {
-    //     const peripheralInfos = [];
-    //     for (let [peripheralId, peripheral] of peripherals) {
-    //         if (peripheral.connected) {
-    //             const newPeripheralInfo = await BleManager.retrieveServices(peripheralId);
-    //             peripheralInfos.push(newPeripheralInfo);
-    //         }
-    //     }
-    //     return peripheralInfos;
-    // };
-    //
-    // const readCharacteristics = async () => {
-    //     let services = await retrieveServices();
-    //     for (let peripheralInfo of services) {
-    //         peripheralInfo.characteristics?.forEach(async (c) => {
-    //             try {
-    //                 const value = await BleManager.read(peripheralInfo.id, c.service, c.characteristic);
-    //                 console.log("[readCharacteristics]", "peripheralId", peripheralInfo.id, "service", c.service, "char", c.characteristic, "\n\tvalue", value);
-    //             }
-    //             catch (error) {
-    //                 console.error("[readCharacteristics]", peripheralInfo, "Error reading characteristic", c, "Error", error);
-    //             }
-    //         });
-    //     }
-    // };
-
     return (
         <SafeAreaView style={containerStyles.pageContainer}>
             {/* TODO Show car name at the top of the screen */}
@@ -157,7 +169,10 @@ function ControllerScreen(props) {
                 onPress={goBackToCarSelect}
             />
             <Controller
-                peripheralId={peripheralData.id}
+                peripheral={peripherals.get(peripheralData.id)}
+                // peripheralId={peripheralData.id}
+                item={itemIndex}
+                setItem={setItemIndex}
             />
         </SafeAreaView>
     );

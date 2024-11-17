@@ -19,8 +19,8 @@ import {
     connectPeripheral,
     handleAndroidPermissions,
     subscribeToNotification,
-    CharacteristicUUIDs,
-    ServiceUUIDs
+    ServiceUUIDs,
+    NOTIFICATION_CHARACTERISTIC_UUIDS
 } from "../../helpers/ble";
 import PeripheralsContext from "../../contexts/BlePeripherals";
 
@@ -29,10 +29,6 @@ import PeripheralsContext from "../../contexts/BlePeripherals";
 const SECONDS_TO_SCAN_FOR = 3;
 const ALLOW_DUPLICATES = true;
 const SERVICE_UUIDS = [ServiceUUIDs.RCController];
-const NOTIFICATION_CHARACTERISTIC_UUIDS = [
-    CharacteristicUUIDs.GetItem,
-    CharacteristicUUIDs.Lap,
-];
 
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -143,15 +139,19 @@ function CarSelectScreen(props) {
                 BleManagerEmitter.addListener('BleManagerStopScan', handleStopScan),
                 BleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral),
                 BleManagerEmitter.addListener('BleManagerConnectPeripheral', handleConnectPeripheral),
-                BleManagerEmitter.addListener('BleManagerDidUpdateState', async (args) => {console.log("Updated state to", args.state)}),
+                BleManagerEmitter.addListener('BleManagerDidUpdateState', async (args) => {
+                    console.log("Updated state to", args.state);
+                    // Scan for cars once the BLE manager is ready
+                    if (args.state === BleState.On) {
+                        startScan();
+                    }
+                }),
             ];
             handleAndroidPermissions();
 
             // TODO Use BleManager.checkState() to check if Bluetooth is enabled (and block further actions)
             // TODO For android (Platform.OS === 'android'), I can just use BleManager.enableBluetooth()
             // TODO See this for a good example app with android and ios: https://medium.com/@varunkukade999/part-1-bluetooth-low-energy-ble-in-react-native-694758908dc2
-
-            startScan();
 
             return () => {
                 console.debug('[app] main component unmounting. Removing listeners...');

@@ -10,6 +10,7 @@ export default function ActionButton({
     onEnd,
     maxDuration = 100000,
     text = "",
+    enabled = false,
 }) {
     const [isPressed, setPressed] = useState(false);
 
@@ -32,10 +33,15 @@ export default function ActionButton({
         .onEnd(endTap);
 
     return (
-        <GestureDetector gesture={tapGesture}>
+        <GestureDetector gesture={enabled ? tapGesture : Gesture.Tap().runOnJS(true)}>
             <View
                 collapsable={false}
-                style={isPressed ? buttonStyles.button.pressed : buttonStyles.button.released}
+                style={
+                    enabled ?
+                    (isPressed ? buttonStyles.button.pressed : buttonStyles.button.released)
+                    :
+                    buttonStyles.button.disabled
+                }
             >
                 {
                     text.length > 0

@@ -77,6 +77,10 @@ export const buttonStyles = StyleSheet.create({
         pressed: {
             ...buttonBaseStyle.button,
             backgroundColor: "#AA0000"
+        },
+        disabled: {
+            ...buttonBaseStyle.button,
+            backgroundColor: "#EE8888"
         }
     },
     text: {
