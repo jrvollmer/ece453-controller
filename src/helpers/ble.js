@@ -56,6 +56,8 @@ export async function connectPeripheral(peripheralId, setPeripherals, BleManager
             // iOS does not have a built in timeout when connecting, so we create one ourselves
             failedToConnectTimer = setTimeout(() => {
                 console.log(`[connectPeripheral][${peripheralId}] Failed to connect - timeout`);
+                BleManager.disconnect(peripheralId);
+                console.log(`[connectPeripheral][${peripheralId}] Disconnected`);
                 return false;
             }, CONNECTION_TIMEOUT_MS);
 
@@ -177,3 +179,26 @@ export const CharacteristicUUIDs = {
     GetItem: '7795A0A0-E497-4A32-9794-93FBE1FBCBB5',
     Lap: '9513A035-86F2-4A31-92F7-52F4A947D767',
 }
+
+export const NOTIFICATION_CHARACTERISTIC_UUIDS = [
+    CharacteristicUUIDs.GetItem,
+    CharacteristicUUIDs.Lap,
+];
+
+export const ItemIndexToCarItem = [
+    // Bounds
+    null,
+    // Green Shell (1-3)
+    1,
+    1,
+    1,
+    // TODO "mushrooms," "coins," "stars," etc.
+    // Bounds
+    null
+]
+
+export const BleMessageToItemIndex = [
+    1, // Green Shell
+    3, // 3 Green Shells
+    null // Bounds
+]

@@ -19,8 +19,8 @@ import {
     connectPeripheral,
     handleAndroidPermissions,
     subscribeToNotification,
-    CharacteristicUUIDs,
-    ServiceUUIDs
+    ServiceUUIDs,
+    NOTIFICATION_CHARACTERISTIC_UUIDS
 } from "../../helpers/ble";
 import PeripheralsContext from "../../contexts/BlePeripherals";
 
@@ -29,10 +29,6 @@ import PeripheralsContext from "../../contexts/BlePeripherals";
 const SECONDS_TO_SCAN_FOR = 3;
 const ALLOW_DUPLICATES = true;
 const SERVICE_UUIDS = [ServiceUUIDs.RCController];
-const NOTIFICATION_CHARACTERISTIC_UUIDS = [
-    CharacteristicUUIDs.GetItem,
-    CharacteristicUUIDs.Lap,
-];
 
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
