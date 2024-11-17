@@ -169,7 +169,8 @@ function ControllerScreen(props) {
                 onPress={goBackToCarSelect}
             />
             <Controller
-                peripheralId={peripheralData.id}
+                peripheral={peripherals.get(peripheralData.id)}
+                // peripheralId={peripheralData.id}
                 item={itemIndex}
                 setItem={setItemIndex}
             />

@@ -24,7 +24,6 @@ function Controller(props) {
     const joyXRef = useRef(0);
     const joyYRef = useRef(0);
     const [writeFlag, setWriteFlag] = useState(false);
-    // TODO REMOVE const [itemIndex, setItemIndex] = useState(0);
 
     const beginPress = () => {
         console.log("Begin Press")
@@ -34,7 +33,7 @@ function Controller(props) {
     const writeUseItemBle = async (bleItem) => {
         // TODO UPDATE: The MCU can poll the "Use Item" characteristic or set up a callback and set it to 0 after changing
         await BleManager.write(
-            props.peripheralId,
+            props.peripheral.id,
             ServiceUUIDs.RCController,
             CharacteristicUUIDs.UseItem,
             [bleItem]
@@ -48,24 +47,24 @@ function Controller(props) {
     }
 
     const endPress = () => {
-        // Use item
-        console.debug("Use item");
-        // TODO REMOVE setItemIndex((currIdx) => {
-        props.setItem((currIdx) => {
-            if (currIdx > 0) {
-                // TODO writeUseItemBle(currIdx);
-                console.log(`Using item. Internal: ${currIdx}; BLE msg: ${ItemIndexToCarItem[currIdx]})`);
-                writeUseItemBle(ItemIndexToCarItem[currIdx]);
-                console.debug("item would be", currIdx - 1);
+        if (props.peripheral.connected) {
+            // Use item
+            console.debug("Use item");
+            props.setItem((currIdx) => {
+                if (currIdx > 0) {
+                    console.log(`Using item. Internal: ${currIdx}; BLE msg: ${ItemIndexToCarItem[currIdx]})`);
+                    writeUseItemBle(ItemIndexToCarItem[currIdx]);
+                    console.debug("item would be", currIdx - 1);
 
-                // If we're still on the same item when decrementing, do so
-                // Otherwise, reset to 0 (no item)
-                if (ItemIndexToCarItem[currIdx - 1] === ItemIndexToCarItem[currIdx]) {
-                    return currIdx - 1;
+                    // If we're still on the same item when decrementing, do so
+                    // Otherwise, reset to 0 (no item)
+                    if (ItemIndexToCarItem[currIdx - 1] === ItemIndexToCarItem[currIdx]) {
+                        return currIdx - 1;
+                    }
                 }
-            }
-            return 0;
-        });
+                return 0;
+            });
+        }
     }
 
     const writeValues = async () => {
@@ -76,41 +75,40 @@ function Controller(props) {
         console.log('X_array', joyXArray);
         console.log('Y_array', joyYArray);
 
-        return; // TODO REMOVE
+        if (props.peripheral.connected) {
+            await BleManager.writeWithoutResponse(
+                props.peripheral.id,
+                ServiceUUIDs.RCController,
+                CharacteristicUUIDs.JoystickX,
+                joyXArray,
+                maxByteSize = 4,
+            )
+                .then(() => {
+                    console.log('Joystick x write success');
+                })
+                .catch((error) => {
+                    console.log('Joystick x write error:', error);
+                });
+            await BleManager.writeWithoutResponse(
+                props.peripheral.id,
+                ServiceUUIDs.RCController,
+                CharacteristicUUIDs.JoystickY,
+                joyYArray,
+                maxByteSize = 4,
+            )
+                .then(() => {
+                    console.log('Joystick y write success');
+                })
+                .catch((error) => {
+                    console.log('Joystick y write error:', error);
+                });
 
-        await BleManager.writeWithoutResponse(
-            props.peripheralId,
-            ServiceUUIDs.RCController,
-            CharacteristicUUIDs.JoystickX,
-            joyXArray,
-            maxByteSize = 4,
-        )
-            .then(() => {
-                console.log('Joystick x write success');
-            })
-            .catch((error) => {
-                console.log('Joystick x write error:', error);
-            });
-        await BleManager.writeWithoutResponse(
-            props.peripheralId,
-            ServiceUUIDs.RCController,
-            CharacteristicUUIDs.JoystickY,
-            joyYArray,
-            maxByteSize = 4,
-        )
-            .then(() => {
-                console.log('Joystick y write success');
-            })
-            .catch((error) => {
-                console.log('Joystick y write error:', error);
-            });
-
-        setWriteFlag(wf => !wf);
+            setWriteFlag(wf => !wf);
+        }
     }
 
     // Write values as quickly as we can
-    useEffect(() => {writeValues()}, [writeFlag]);
-
+    useEffect(() => {writeValues()}, [writeFlag, props.peripheral.connected]); // TODO Make sure usign a prop won't cause issues
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -144,10 +142,8 @@ function Controller(props) {
                             height: undefined,
                             aspectRatio: 1,
                             resizeMode: "contain",
-                            // TODO REMOVE opacity: (itemIndex === 0 ? 0 : 1)
                             opacity: (props.item === 0 ? 0 : 1)
                         }}
-                        // TODO REMOVE source={ItemImages[itemIndex]}
                         source={ItemImages[props.item]}
                     />
                 </View>
@@ -156,6 +152,7 @@ function Controller(props) {
                         onBegin={beginPress}
                         onEnd={endPress}
                         text="I"
+                        enabled={props.peripheral.connected}
                     />
                     <Joystick
                         id={"car-joystick-x"}
