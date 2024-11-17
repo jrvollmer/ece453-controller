@@ -109,9 +109,11 @@ function ControllerScreen(props) {
         console.debug(`[handleUpdateValueForCharacteristic] received data from '${data.peripheral}' with characteristic='${characteristic}' and value='${data.value}'`);
 
         if (characteristic === CharacteristicUUIDs.GetItem) {
-            console.debug("[handleUpdateValueForCharacteristic] Got item")
-            // Set our version of the item
-            setItemIndex(BleMessageToItemIndex[data.value]);
+            // Accept new item if we don't currently have any
+            setItemIndex((currIdx) => {
+                console.debug(`[handleUpdateValueForCharacteristic] (in setter) Got item, curr index ${currIdx}, item ${data.value}`)
+                return currIdx !== 0 ? currIdx : BleMessageToItemIndex[data.value];
+            });
         } else if (data.characteristic === CharacteristicUUIDs.Lap) {
             // TODO
         }

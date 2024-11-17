@@ -76,6 +76,8 @@ function Controller(props) {
         console.log('X_array', joyXArray);
         console.log('Y_array', joyYArray);
 
+        return; // TODO REMOVE
+
         await BleManager.writeWithoutResponse(
             props.peripheralId,
             ServiceUUIDs.RCController,
