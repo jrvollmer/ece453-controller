@@ -47,7 +47,7 @@ function Controller(props) {
             });
     }
 
-    const endPress = async () => {
+    const endPress = () => {
         // Use item
         console.debug("Use item");
         // TODO REMOVE setItemIndex((currIdx) => {

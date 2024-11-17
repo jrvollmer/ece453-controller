@@ -77,11 +77,12 @@ function ControllerScreen(props) {
                 let tempPeripheralData;
                 // We aren't intending to leave, so try to reconnect
                 for (let i = 0; i < RECONNECT_ATTEMPTS; i++) {
-                    console.reportErrorsAsExceptions = false; // TODO
+                    // Reconnect attempt
+                    console.reportErrorsAsExceptions = false; // Don't show disconnect call on app
                     console.debug(`[onCarDisconnect][${i + 1}/${RECONNECT_ATTEMPTS}] Attempting to reconnect`)
                     tempPeripheralData = await connectPeripheral(peripheralId, setPeripherals, BleManager);
                     console.debug(`[onCarDisconnect][${i + 1}/${RECONNECT_ATTEMPTS}] Passed reconnection attempt with peripheral data ${tempPeripheralData}`)
-                    console.reportErrorsAsExceptions = true; // TODO
+                    console.reportErrorsAsExceptions = true; // Reenable exception alerts
                     if (tempPeripheralData) {
                         peripheralData = tempPeripheralData;
                         // Wait a second for the next onCarDisconnect call so that we don't unset reconnecting prematurely
@@ -111,17 +112,6 @@ function ControllerScreen(props) {
             console.debug("[handleUpdateValueForCharacteristic] Got item")
             // Set our version of the item
             setItemIndex(BleMessageToItemIndex[data.value]);
-            // TODO REMOVE
-            // // Get new item
-            // BleManager.read(peripheralData.id, ServiceUUIDs.RCController, characteristic)
-            //           .then((itemData) => {
-            //               console.log('GetItem read data:', itemData);
-            //               // Set our version of the item
-            //               setItemIndex(BleMessageToItemIndex[itemData]);
-            //           })
-            //           .catch((error) => {
-            //               console.log('Error reading GetItem characteristic:', error);
-            //           });
         } else if (data.characteristic === CharacteristicUUIDs.Lap) {
             // TODO
         }
@@ -167,33 +157,6 @@ function ControllerScreen(props) {
             }
         }, [])
     );
-
-    // TODO REMOVE
-    // const retrieveServices = async () => {
-    //     const peripheralInfos = [];
-    //     for (let [peripheralId, peripheral] of peripherals) {
-    //         if (peripheral.connected) {
-    //             const newPeripheralInfo = await BleManager.retrieveServices(peripheralId);
-    //             peripheralInfos.push(newPeripheralInfo);
-    //         }
-    //     }
-    //     return peripheralInfos;
-    // };
-    //
-    // const readCharacteristics = async () => {
-    //     let services = await retrieveServices();
-    //     for (let peripheralInfo of services) {
-    //         peripheralInfo.characteristics?.forEach(async (c) => {
-    //             try {
-    //                 const value = await BleManager.read(peripheralInfo.id, c.service, c.characteristic);
-    //                 console.log("[readCharacteristics]", "peripheralId", peripheralInfo.id, "service", c.service, "char", c.characteristic, "\n\tvalue", value);
-    //             }
-    //             catch (error) {
-    //                 console.error("[readCharacteristics]", peripheralInfo, "Error reading characteristic", c, "Error", error);
-    //             }
-    //         });
-    //     }
-    // };
 
     return (
         <SafeAreaView style={containerStyles.pageContainer}>
