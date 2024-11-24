@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useState} from 'react';
-import {BackHandler, Button, NativeEventEmitter, NativeModules, Platform, SafeAreaView} from 'react-native';
+import {BackHandler, Button, Linking, NativeEventEmitter, NativeModules, Platform, SafeAreaView} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 
 import {containerStyles} from "../../styles/DefaultStyles";
@@ -40,6 +40,9 @@ function ControllerScreen(props) {
         if (p && (p.connected || p.connecting)) {
             try {
                 leaving = true;
+                for (const c of NOTIFICATION_CHARACTERISTIC_UUIDS) {
+                    await BleManager.stopNotification(peripheralData.id, ServiceUUIDs.RCController, c);
+                }
                 await BleManager.disconnect(peripheralData.id);
                 setPeripherals(map => {
                     let _p = map.get(peripheralData.id);
@@ -50,6 +53,14 @@ function ControllerScreen(props) {
                     }
                     return map;
                 });
+                if (Platform.OS === 'android') {
+                    await BleManager.removeBond(peripheralData.id);
+                } else {
+                    // iOS _should_ be able to open Bluetooth settings via prefs:root=Bluetooth (tested works) or
+                    // App-prefs:Bluetooth (according to most sites), but go figure, it doesn't work with React Native.
+                    // Instead, it just opens the main settings page, or whatever page you have open in the Settings app
+                    await Linking.openURL('App-prefs:Bluetooth');
+                }
             }
             catch (error) {
                 console.error(`[goBackToCarSelect][${peripheralData.id}] error when trying to disconnect device.`, error);
