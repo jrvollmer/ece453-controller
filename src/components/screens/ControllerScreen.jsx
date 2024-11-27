@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useState} from 'react';
-import {BackHandler, Button, Linking, NativeEventEmitter, NativeModules, Platform, SafeAreaView} from 'react-native';
+import {BackHandler, Button, Linking, NativeEventEmitter, NativeModules, Platform, SafeAreaView, Text} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 
 import {containerStyles} from "../../styles/DefaultStyles";
@@ -22,6 +22,7 @@ const RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY_MS = 5000;
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+const NUM_LAPS = 3
 
 
 function ControllerScreen(props) {
@@ -33,6 +34,7 @@ function ControllerScreen(props) {
     const navigation = useNavigation();
     const [peripherals, setPeripherals] = useContext(PeripheralsContext);
     const [itemIndex, setItemIndex] = useState(0);
+    const [lap, setLap] = useState(1);
 
     const goBackToCarSelect = async () => {
         // Disconnect and go back to the car selection screen
@@ -53,6 +55,7 @@ function ControllerScreen(props) {
                     }
                     return map;
                 });
+                await sleep(500); // TODO Empirical - needs tuning though
                 if (Platform.OS === 'android') {
                     await BleManager.removeBond(peripheralData.id);
                 } else {
@@ -101,6 +104,7 @@ function ControllerScreen(props) {
                         let subscribed = true;
                         for (const characteristicUUID of NOTIFICATION_CHARACTERISTIC_UUIDS) {
                             subscribed &&= await subscribeToNotification(peripheralId, characteristicUUID, ServiceUUIDs.RCController);
+                            console.log("Subscribed to", characteristicUUID);
                         }
                         break;
                     }
@@ -125,8 +129,11 @@ function ControllerScreen(props) {
                 console.debug(`[handleUpdateValueForCharacteristic] (in setter) Got item, curr index ${currIdx}, item ${data.value}`)
                 return currIdx !== 0 ? currIdx : BleMessageToItemIndex[data.value];
             });
-        } else if (data.characteristic === CharacteristicUUIDs.Lap) {
-            // TODO
+        } else if (characteristic === CharacteristicUUIDs.Lap) {
+            console.debug("Got lap");
+            if (data.value !== lap) {
+                setLap(data.value);
+            }
         }
     };
 
@@ -181,10 +188,10 @@ function ControllerScreen(props) {
             />
             <Controller
                 peripheral={peripherals.get(peripheralData.id)}
-                // peripheralId={peripheralData.id}
                 item={itemIndex}
                 setItem={setItemIndex}
             />
+            <Text>Lap {lap} / {NUM_LAPS}</Text>
         </SafeAreaView>
     );
 }

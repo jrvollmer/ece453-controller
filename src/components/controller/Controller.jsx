@@ -9,6 +9,10 @@ import {ItemImages} from "../../Images";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
 import {CharacteristicUUIDs, ServiceUUIDs, ItemIndexToCarItem} from "../../helpers/ble";
+import {sleep} from "../../helpers/generic";
+
+
+const JOYSTICK_SEND_PERIOD_MS = 100;
 
 
 function floatToByteArray(float) {
@@ -103,11 +107,13 @@ function Controller(props) {
                     console.log('Joystick y write error:', error);
                 });
 
+            await sleep(JOYSTICK_SEND_PERIOD_MS); // TODO
+
             setWriteFlag(wf => !wf);
         }
     }
 
-    // Write values as quickly as we can
+    // Write values every JOYSTICK_SEND_PERIOD_MS ms
     useEffect(() => {writeValues()}, [writeFlag, props.peripheral.connected]); // TODO Make sure usign a prop won't cause issues
 
     return (
