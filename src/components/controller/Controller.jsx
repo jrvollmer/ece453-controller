@@ -8,7 +8,7 @@ import {axisPadStyles, containerStyles, padBorderColor, smallKnobSize} from "../
 import {ItemImages} from "../../Images";
 import Joystick from "./Joystick";
 import ActionButton from "./ActionButton";
-import {CharacteristicUUIDs, ServiceUUIDs, ItemIndexToCarItem} from "../../helpers/ble";
+import {CharacteristicUUIDs, ServiceUUIDs, ItemIndexToCarItem, NUM_LAPS} from "../../helpers/ble";
 import {sleep} from "../../helpers/generic";
 
 
@@ -28,11 +28,6 @@ function Controller(props) {
     const joyXRef = useRef(0);
     const joyYRef = useRef(0);
     const [writeFlag, setWriteFlag] = useState(false);
-
-    const beginPress = () => {
-        console.log("Begin Press")
-        // TODO Could probably remove this, unless we want to enable holding items behind the car (i.e. shielding)
-    }
 
     const writeUseItemBle = async (bleItem) => {
         // TODO UPDATE: The MCU can poll the "Use Item" characteristic or set up a callback and set it to 0 after changing
@@ -74,40 +69,43 @@ function Controller(props) {
     const writeValues = async () => {
         const joyXArray = floatToByteArray(joyXRef.current).reverse();
         const joyYArray = floatToByteArray(joyYRef.current).reverse();
-        console.log('X', joyXRef.current);
-        console.log('Y', joyYRef.current);
-        console.log('X_array', joyXArray);
-        console.log('Y_array', joyYArray);
+        // console.log('X', joyXRef.current);
+        // console.log('Y', joyYRef.current);
+        // console.log('X_array', joyXArray);
+        // console.log('Y_array', joyYArray);
 
         if (props.peripheral.connected) {
-            await BleManager.writeWithoutResponse(
-                props.peripheral.id,
-                ServiceUUIDs.RCController,
-                CharacteristicUUIDs.JoystickX,
-                joyXArray,
-                maxByteSize = 4,
-            )
-                .then(() => {
-                    console.log('Joystick x write success');
-                })
-                .catch((error) => {
-                    console.log('Joystick x write error:', error);
-                });
-            await BleManager.writeWithoutResponse(
-                props.peripheral.id,
-                ServiceUUIDs.RCController,
-                CharacteristicUUIDs.JoystickY,
-                joyYArray,
-                maxByteSize = 4,
-            )
-                .then(() => {
-                    console.log('Joystick y write success');
-                })
-                .catch((error) => {
-                    console.log('Joystick y write error:', error);
-                });
+            // Only send joystick values during the race
+            if ((props.lap > 0) && (props.lap <= NUM_LAPS)) {
+                await BleManager.writeWithoutResponse(
+                    props.peripheral.id,
+                    ServiceUUIDs.RCController,
+                    CharacteristicUUIDs.JoystickX,
+                    joyXArray,
+                    maxByteSize = 4,
+                )
+                    .then(() => {
+                        // console.log('Joystick x write success');
+                    })
+                    .catch((error) => {
+                        console.log('Joystick x write error:', error);
+                    });
+                await BleManager.writeWithoutResponse(
+                    props.peripheral.id,
+                    ServiceUUIDs.RCController,
+                    CharacteristicUUIDs.JoystickY,
+                    joyYArray,
+                    maxByteSize = 4,
+                )
+                    .then(() => {
+                        // console.log('Joystick y write success');
+                    })
+                    .catch((error) => {
+                        console.log('Joystick y write error:', error);
+                    });
+            }
 
-            await sleep(JOYSTICK_SEND_PERIOD_MS); // TODO
+            await sleep(JOYSTICK_SEND_PERIOD_MS);
 
             setWriteFlag(wf => !wf);
         }
@@ -121,6 +119,7 @@ function Controller(props) {
             <View style={containerStyles.padContainer}>
                 <Joystick
                     id={"car-joystick-y"}
+                    enabled={props.peripheral.connected && (props.lap > 0) && (props.lap <= NUM_LAPS)}
                     disableX={true}
                     setY={(val) => {joyYRef.current = val}}
                     stepSize={0}
@@ -155,13 +154,13 @@ function Controller(props) {
                 </View>
                 <View style={{flexDirection: "column", rowGap: 25, alignItems: "center"}}>
                     <ActionButton
-                        onBegin={beginPress}
                         onEnd={endPress}
                         text="I"
                         enabled={props.peripheral.connected}
                     />
                     <Joystick
                         id={"car-joystick-x"}
+                        enabled={props.peripheral.connected && (props.lap > 0) && (props.lap <= NUM_LAPS)}
                         disableY={true}
                         setX={(val) => {joyXRef.current = val}}
                         stepSize={0}

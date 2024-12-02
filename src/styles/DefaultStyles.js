@@ -35,19 +35,10 @@ export const axisPadStyles = StyleSheet.create({
         borderWidth: 1.5,
         borderColor: crimson,
         padding: 4,
-        paddingTop: 0,
+        backgroundColor: crimson,
     },
     wrapperActive: {
         borderColor: deepRed,
-    },
-    textWrapper: {
-        marginBottom: 4,
-        paddingHorizontal: 12,
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8,
-        backgroundColor: crimson,
-    },
-    textWrapperActive: {
         backgroundColor: deepRed,
     },
 });
@@ -98,8 +89,8 @@ export const buttonStyles = StyleSheet.create({
 
 export const containerStyles = StyleSheet.create({
     pageContainer: {
-        // TODO REMOVE Not sure why I ever had this: paddingTop: StatusBar.currentHeight || 0,
         flex: 1,
+        backgroundColor: "#FFFFFF",
     },
     padContainer: {
         flex: 1,

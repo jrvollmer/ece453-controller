@@ -20,13 +20,15 @@ import {
     handleAndroidPermissions,
     subscribeToNotification,
     ServiceUUIDs,
-    NOTIFICATION_CHARACTERISTIC_UUIDS
+    NOTIFICATION_CHARACTERISTIC_UUIDS,
+    CharacteristicUUIDs,
+    GameEvents,
 } from "../../helpers/ble";
 import PeripheralsContext from "../../contexts/BlePeripherals";
 
 
 // Scanning constants
-const SECONDS_TO_SCAN_FOR = 3;
+const SECONDS_TO_SCAN_FOR = 1; // TTODO 3
 const ALLOW_DUPLICATES = true;
 const SERVICE_UUIDS = [ServiceUUIDs.RCController];
 
@@ -70,10 +72,21 @@ function CarSelectScreen(props) {
 
     const connectAndNavigate = async (peripheral) => {
         const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager);
+
+        // Need to subscribe to notifications
         let subscribed = true;
         for (const characteristicUUID of NOTIFICATION_CHARACTERISTIC_UUIDS) {
             subscribed &&= await subscribeToNotification(peripheral.id, characteristicUUID, SERVICE_UUIDS[0]);
         }
+
+        // Reset lap count when intially connecting to the car
+        await BleManager.writeWithoutResponse(
+            peripheralData.id,
+            ServiceUUIDs.RCController,
+            CharacteristicUUIDs.GameEvent,
+            [GameEvents.StartRace]
+        );
+
         if (peripheralData && subscribed) {
             navigation.navigate('Controller', {
                 peripheralData: peripheralData
