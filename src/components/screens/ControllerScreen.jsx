@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {BackHandler, Button, FlatList, Linking, Modal, NativeEventEmitter, NativeModules, Platform, Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {BackHandler, FlatList, Linking, Modal, NativeEventEmitter, NativeModules, Platform, Pressable, SafeAreaView, Text, View} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -84,8 +84,10 @@ function ControllerScreen(props) {
         if (p && (p.connected || p.connecting)) {
             try {
                 leaving = true;
-                for (const c of NOTIFICATION_CHARACTERISTIC_UUIDS) {
-                    await BleManager.stopNotification(peripheralData.id, ServiceUUIDs.RCController, c); // TODO This may be causing issues (or at least be unnecessary)
+                if (p.connected) { // TODO Verify. Added without testing
+                    for (const c of NOTIFICATION_CHARACTERISTIC_UUIDS) {
+                        await BleManager.stopNotification(peripheralData.id, ServiceUUIDs.RCController, c); // TODO This may be causing issues (or at least be unnecessary)
+                    }
                 }
                 await BleManager.disconnect(peripheralData.id);
                 setPeripherals(map => {
@@ -171,7 +173,6 @@ function ControllerScreen(props) {
 
                         // Send game resume message to car so that it can set lap count to 1 in case of MCU reset
                         // (0->1 doesn't increase controller lap count)
-                        console.log("[handleCarDisconnect] Current lap:", statelessLap); // TODO REMOVE
                         if ((statelessLap > 0) && (statelessLap <= NUM_LAPS)) {
                             await BleManager.writeWithoutResponse(
                                 peripheralData.id,
@@ -196,11 +197,9 @@ function ControllerScreen(props) {
     const handleUpdateValueForCharacteristic = (data) => {
         const characteristic = data.characteristic.toUpperCase();
         console.debug(`[handleUpdateValueForCharacteristic] received data from '${data.peripheral}' with characteristic='${characteristic}' and value='${data.value}'`);
-        console.log("lap :", statelessLap); // TODO REMOVE
 
         // Only accept laps and items when racing
         if ((statelessLap > 0) && (statelessLap <= NUM_LAPS)) {
-            console.log("Accepted charactteristic notification"); // TODO REMOVE
             if (characteristic === CharacteristicUUIDs.GetItem) {
                 // Accept new item if we don't currently have any
                 setItemIndex((currIdx) => {
@@ -208,13 +207,10 @@ function ControllerScreen(props) {
                     return currIdx !== 0 ? currIdx : BleMessageToItemIndex[data.value];
                 });
             } else if (characteristic === CharacteristicUUIDs.Lap) {
-                // TODO if (data.value[0] > lap) { // TODO Should've been currLap, but that logic is flawed anyway
                 if (data.value[0] > 1) {
-                    // TODO setLap(data.value[0]);
                     setLap((l) => l + 1);
                     statelessLap++;
                 }
-                // TODO if (data.value[0] > NUM_LAPS) {
                 if (statelessLap > NUM_LAPS) {
                     // Race finished
                     BleManager.writeWithoutResponse(
@@ -240,7 +236,6 @@ function ControllerScreen(props) {
 
     useFocusEffect(
         useCallback(() => {
-            console.log("focused"); // TODO REMOVE
             // Override the built-in status bar back button default behavior (Android only)
             const onBackPress = () => {
                 console.log("Pressed back")
@@ -415,7 +410,7 @@ function ControllerScreen(props) {
             {/* Start Race Modal */}
             <Modal
                 transparent={true}
-                animationType="slide" // TODO REMOVE this and associated 1 second delay
+                animationType="slide"
                 supportedOrientations={['landscape']}
                 visible={startRaceModalVisible}
                 onRequestClose={() => {setStartRaceModalVisible(false)}}

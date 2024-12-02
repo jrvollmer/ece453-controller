@@ -112,7 +112,7 @@ function Controller(props) {
     }
 
     // Write values every JOYSTICK_SEND_PERIOD_MS ms
-    useEffect(() => {writeValues()}, [writeFlag, props.peripheral.connected]); // TODO Make sure usign a prop won't cause issues
+    useEffect(() => {writeValues()}, [writeFlag, props.peripheral.connected]);
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>

@@ -195,18 +195,23 @@ export const GameEvents = {
 export const ItemIndexToCarItem = [
     // Bounds
     null,
-    // Green Shell (1-3)
+    // Projectiles (1-3)
     1,
     1,
     1,
-    // TODO "mushrooms," "coins," "stars," etc.
+    // Shield
+    2,
+    // Boost
+    3,
     // Bounds
     null
 ]
 
 export const BleMessageToItemIndex = [
-    1, // Green Shell
-    3, // 3 Green Shells
+    1, // Projectile
+    3, // 3 Projectile
+    4, // Shield
+    5, // Boost
     null // Bounds
 ]
 

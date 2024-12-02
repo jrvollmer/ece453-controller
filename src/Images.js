@@ -1,12 +1,16 @@
-const blueShellImg = require("../assets/images/blue-shell.png");
-const greenShellImg = require("../assets/images/green-shell.png");
-const greenShell2Img = require("../assets/images/2-green-shells.png");
-const greenShell3Img = require("../assets/images/3-green-shells.png");
+const shotImg = require("../assets/images/shot.png");
+const shot2Img = require("../assets/images/2-shots.png");
+const shot3Img = require("../assets/images/3-shots.png");
+const shieldImg = require("../assets/images/shield.png");
+const boostImg = require("../assets/images/boost.png");
 
 export const ItemImages = [
     null,
-    greenShellImg,
-    greenShell2Img,
-    greenShell3Img,
-    blueShellImg,
+    shotImg,
+    shot2Img,
+    shot3Img,
+    null,
+    shieldImg,
+    null,
+    boostImg,
 ]
