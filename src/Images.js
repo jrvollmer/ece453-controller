@@ -9,8 +9,6 @@ export const ItemImages = [
     shotImg,
     shot2Img,
     shot3Img,
-    null,
     shieldImg,
-    null,
     boostImg,
 ]
