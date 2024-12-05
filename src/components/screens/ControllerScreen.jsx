@@ -614,7 +614,9 @@ function ControllerScreen(props) {
                         flexGrow: 1,
                         textAlign: "center",
                         fontSize: 32,
+                        fontFamily: "serif",
                         fontWeight: "bold",
+                        letterSpacing: 1,
                         color: peripherals.get(peripheralData.id).connected ? "#000" : "#00000040"
                     }}
                 >

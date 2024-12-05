@@ -11,9 +11,8 @@ import {
     View
 } from 'react-native';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {Colors} from "react-native/Libraries/NewAppScreen";
 
-import {styles} from "../../styles/DefaultStyles";
+import {scanStyles} from "../../styles/DefaultStyles";
 import BleManager, {BleScanCallbackType, BleScanMatchMode, BleScanMode, BleState} from "react-native-ble-manager";
 import {
     connectPeripheral,
@@ -28,7 +27,7 @@ import PeripheralsContext from "../../contexts/BlePeripherals";
 
 
 // Scanning constants
-const SECONDS_TO_SCAN_FOR = 1; // TTODO 3
+const SECONDS_TO_SCAN_FOR = 1;
 const ALLOW_DUPLICATES = true;
 const SERVICE_UUIDS = [ServiceUUIDs.RCController];
 
@@ -70,8 +69,8 @@ function CarSelectScreen(props) {
         }
     };
 
-    const connectAndNavigate = async (peripheral) => {
-        const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager);
+    const connectAndNavigate = async (peripheral, advName = null) => {
+        const peripheralData = await connectPeripheral(peripheral.id, setPeripherals, BleManager, advName);
 
         // Need to subscribe to notifications
         let subscribed = true;
@@ -162,10 +161,6 @@ function CarSelectScreen(props) {
             ];
             handleAndroidPermissions();
 
-            // TODO Use BleManager.checkState() to check if Bluetooth is enabled (and block further actions)
-            // TODO For android (Platform.OS === 'android'), I can just use BleManager.enableBluetooth()
-            // TODO See this for a good example app with android and ios: https://medium.com/@varunkukade999/part-1-bluetooth-low-energy-ble-in-react-native-694758908dc2
-
             return () => {
                 console.debug('[app] main component unmounting. Removing listeners...');
                 for (const listener of listeners) {
@@ -178,17 +173,14 @@ function CarSelectScreen(props) {
 
 
     const renderItem = ({ item }) => {
-        const backgroundColor = item.connected ? '#e30909' : Colors.white;
+        const backgroundColor = item.connected ? '#d30a0a' : '#fc0000';
         return (
-            <TouchableHighlight onPress={() => connectAndNavigate(item)}>
-                <View style={[styles.row, { backgroundColor }]}>
-                    <Text style={styles.peripheralName}>
-                        {/* completeLocalName (item.name) & shortAdvertisingName (advertising.localName) may not always be the same */}
-                        {item.name} - {item?.advertising?.localName}
-                        {item.connecting && ' - Connecting...'}
+            <TouchableHighlight onPress={() => connectAndNavigate(item, item?.advertising?.localName)}>
+                <View style={[scanStyles.row, { backgroundColor }]}>
+                    <Text style={scanStyles.peripheralName}>
+                        {/* Cars will advertise their complete names as their local advertising names */}
+                        {item?.advertising?.localName}
                     </Text>
-                    <Text style={styles.rssi}>RSSI: {item.rssi}</Text>
-                    <Text style={styles.peripheralId}>{item.id}</Text>
                 </View>
             </TouchableHighlight>
         );
@@ -196,17 +188,17 @@ function CarSelectScreen(props) {
 
 
     return (
-        <SafeAreaView style={styles.body}>
-            <Pressable style={styles.scanButton} onPress={startScan}>
-                <Text style={styles.scanButtonText}>
+        <SafeAreaView style={scanStyles.body}>
+            <Pressable style={scanStyles.scanButton} onPress={startScan}>
+                <Text style={scanStyles.scanButtonText}>
                     {isScanning ? 'Searching...' : 'Find Cars'}
                 </Text>
             </Pressable>
 
             {
                 Array.from(peripherals.values()).length === 0 ?
-                    <View style={styles.row}>
-                        <Text style={styles.noPeripherals}>
+                    <View style={scanStyles.row}>
+                        <Text style={scanStyles.noPeripherals}>
                             No cars found. Try searching again
                         </Text>
                     </View>

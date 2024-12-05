@@ -1,5 +1,4 @@
 import {StyleSheet} from "react-native";
-import {Colors} from "react-native/Libraries/NewAppScreen";
 
 
 const stickBackgroundColor = "#EE000090";
@@ -112,13 +111,13 @@ const boxShadow = {
     elevation: 5,
 };
 
-export const styles = StyleSheet.create({
+export const scanStyles = StyleSheet.create({
     scanButton: {
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 16,
         paddingHorizontal: 16,
-        backgroundColor: '#8a0a0a',
+        backgroundColor: '#ff2a2a',
         margin: 10,
         borderRadius: 12,
         ...boxShadow,
@@ -126,21 +125,21 @@ export const styles = StyleSheet.create({
     scanButtonText: {
         fontSize: 16,
         letterSpacing: 0.25,
-        color: Colors.white,
+        color: '#ffffff',
+        fontWeight: 'bold',
     },
     body: {
-        backgroundColor: '#fc0000',
+        backgroundColor: '#ffffff',
         flex: 1,
     },
     peripheralName: {
-        fontSize: 16,
+        color: '#ffffff',
         textAlign: 'center',
-        padding: 10,
-    },
-    rssi: {
-        fontSize: 12,
-        textAlign: 'center',
-        padding: 2,
+        padding: 15,
+        fontSize: 32,
+        fontFamily: 'serif',
+        fontWeight: 'bold',
+        letterSpacing: 1,
     },
     peripheralId: {
         fontSize: 12,
@@ -157,6 +156,5 @@ export const styles = StyleSheet.create({
     noPeripherals: {
         margin: 10,
         textAlign: 'center',
-        color: Colors.white,
     },
 });

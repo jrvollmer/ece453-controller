@@ -37,7 +37,7 @@ export function handleAndroidPermissions() {
     }
 }
 
-export async function connectPeripheral(peripheralId, setPeripherals, BleManager) {
+export async function connectPeripheral(peripheralId, setPeripherals, BleManager, advName = null) {
     const CONNECTION_TIMEOUT_MS = 30000;
 
     try {
@@ -46,6 +46,9 @@ export async function connectPeripheral(peripheralId, setPeripherals, BleManager
                 let p = map.get(peripheralId);
                 if (p) {
                     p.connecting = true;
+                    if (advName !== null) {
+                        p.name = advName
+                    }
                     return new Map(map.set(p.id, p));
                 }
                 return map;
