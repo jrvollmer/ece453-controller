@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "bucky-kart-controller",
+    "name": "Bucky Kart",
     "slug": "bucky-kart-controller",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "orientation": "landscape",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.jvollmer.buckykartcontroller"

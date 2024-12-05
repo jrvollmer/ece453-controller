@@ -6,7 +6,6 @@ import {buttonStyles} from "../../styles/DefaultStyles";
 
 // Credit to https://stackoverflow.com/a/77499348
 export default function ActionButton({
-    onBegin,
     onEnd,
     maxDuration = 100000,
     text = "",
@@ -25,7 +24,6 @@ export default function ActionButton({
         // Start tap
         .onBegin(() => {
             setPressed(true);
-            onBegin();
         })
         // Stop tap (move finger off button)
         .onTouchesCancelled(endTap)

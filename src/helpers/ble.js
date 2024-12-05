@@ -37,7 +37,7 @@ export function handleAndroidPermissions() {
     }
 }
 
-export async function connectPeripheral(peripheralId, setPeripherals, BleManager) {
+export async function connectPeripheral(peripheralId, setPeripherals, BleManager, advName = null) {
     const CONNECTION_TIMEOUT_MS = 30000;
 
     try {
@@ -46,6 +46,9 @@ export async function connectPeripheral(peripheralId, setPeripherals, BleManager
                 let p = map.get(peripheralId);
                 if (p) {
                     p.connecting = true;
+                    if (advName !== null) {
+                        p.name = advName
+                    }
                     return new Map(map.set(p.id, p));
                 }
                 return map;
@@ -174,6 +177,7 @@ export const CharacteristicUUIDs = {
     // Read/Write characteristics
     JoystickX: 'AB7E0F0E-8934-497A-89E7-81A447C929D2',
     JoystickY: '98FFEAA2-8CA2-4BAA-8FA3-210CB52FE787',
+    GameEvent: '21D68A9C-7C9D-4D9C-90D6-9BEACD2AEBE2',
     UseItem: 'A36B4769-EA50-4219-BA37-B2099C860B8B',
     // Read/Notify characteristics
     GetItem: '7795A0A0-E497-4A32-9794-93FBE1FBCBB5',
@@ -183,22 +187,35 @@ export const CharacteristicUUIDs = {
 export const NOTIFICATION_CHARACTERISTIC_UUIDS = [
     CharacteristicUUIDs.GetItem,
     CharacteristicUUIDs.Lap,
-];
+]
+
+export const GameEvents = {
+    StartRace: 0,
+    ResumeRace: 1,
+    EndRace: 2,
+}
 
 export const ItemIndexToCarItem = [
     // Bounds
     null,
-    // Green Shell (1-3)
+    // Projectiles (1-3)
     1,
     1,
     1,
-    // TODO "mushrooms," "coins," "stars," etc.
+    // Shield
+    2,
+    // Boost
+    3,
     // Bounds
     null
 ]
 
 export const BleMessageToItemIndex = [
-    1, // Green Shell
-    3, // 3 Green Shells
+    1, // Projectile
+    3, // 3 Projectile
+    4, // Shield
+    5, // Boost
     null // Bounds
 ]
+
+export const NUM_LAPS = 3;
