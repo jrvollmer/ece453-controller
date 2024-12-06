@@ -30,7 +30,6 @@ function Controller(props) {
     const [writeFlag, setWriteFlag] = useState(false);
 
     const writeUseItemBle = async (bleItem) => {
-        // TODO UPDATE: The MCU can poll the "Use Item" characteristic or set up a callback and set it to 0 after changing
         await BleManager.write(
             props.peripheral.id,
             ServiceUUIDs.RCController,

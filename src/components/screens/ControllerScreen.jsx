@@ -1,11 +1,23 @@
 import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {BackHandler, FlatList, Linking, Modal, NativeEventEmitter, NativeModules, Platform, Pressable, SafeAreaView, StatusBar, Text, View} from 'react-native';
+import {
+    BackHandler,
+    FlatList,
+    Modal,
+    NativeEventEmitter,
+    NativeModules,
+    Platform,
+    Pressable,
+    SafeAreaView,
+    StatusBar,
+    Text,
+    View
+} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
+import BleManager from "react-native-ble-manager";
 
 import {buttonStyles, containerStyles} from "../../styles/DefaultStyles";
 import Controller from "../controller/Controller";
-import BleManager from "react-native-ble-manager";
 import PeripheralsContext from "../../contexts/BlePeripherals";
 import {
     connectPeripheral,
@@ -99,16 +111,6 @@ function ControllerScreen(props) {
                     }
                     return map;
                 });
-                // TODO
-                // await sleep(500); // TODO Empirical - needs tuning though
-                // if (Platform.OS === 'android') {
-                //     await BleManager.removeBond(peripheralData.id); // TODO REMOVE and just use the old connect/disconnectt logic
-                // } else {
-                //     // iOS _should_ be able to open Bluetooth settings via prefs:root=Bluetooth (tested works) or
-                //     // App-prefs:Bluetooth (according to most sites), but go figure, it doesn't work with React Native.
-                //     // Instead, it just opens the main settings page, or whatever page you have open in the Settings app
-                //     await Linking.openURL('App-prefs:Bluetooth'); // TODO REMOVE I think that this is messing with the disconnect logic
-                // }
             }
             catch (error) {
                 console.error(`[goBackToCarSelect][${peripheralData.id}] error when trying to disconnect device.`, error);
@@ -122,7 +124,7 @@ function ControllerScreen(props) {
         const ms = t % 1000;
         const sec = Math.floor((t / 1000) % 60);
         const min = Math.floor((t / 60000) % 60);
-        const hr = Math.floor((t / 3600000) % 24); // TODO REMOVE I really hope we don't have hour long laps
+        const hr = Math.floor((t / 3600000) % 24);
 
         const msStr = ms < 10 ? `00${ms}` : (ms < 100 ? `0${ms}` : ms);
         const secStr = sec < 10 ? `0${sec}` : sec;
@@ -271,8 +273,6 @@ function ControllerScreen(props) {
                 for (const listener of bleListeners) {
                     listener.remove();
                 }
-
-                // TODO Disconnect from peripheral here
             }
         }, [])
     );
