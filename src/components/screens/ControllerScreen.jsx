@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {BackHandler, FlatList, Linking, Modal, NativeEventEmitter, NativeModules, Platform, Pressable, SafeAreaView, Text, View} from 'react-native';
+import {BackHandler, FlatList, Linking, Modal, NativeEventEmitter, NativeModules, Platform, Pressable, SafeAreaView, StatusBar, Text, View} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -29,13 +29,13 @@ const LAP_TIME_UPDATE_PERIOD_MS = 10;
 
 // Needed for accessing stateful information within event handlers
 let statelessLap = 0;
+let leaving = false;
 
 
 function ControllerScreen(props) {
     let {
         peripheralData
     } = props.route.params;
-    let leaving = false;
     let reconnecting = false;
 
     const navigation = useNavigation();
@@ -84,9 +84,9 @@ function ControllerScreen(props) {
         if (p && (p.connected || p.connecting)) {
             try {
                 leaving = true;
-                if (p.connected) { // TODO Verify. Added without testing
+                if (p.connected) {
                     for (const c of NOTIFICATION_CHARACTERISTIC_UUIDS) {
-                        await BleManager.stopNotification(peripheralData.id, ServiceUUIDs.RCController, c); // TODO This may be causing issues (or at least be unnecessary)
+                        await BleManager.stopNotification(peripheralData.id, ServiceUUIDs.RCController, c);
                     }
                 }
                 await BleManager.disconnect(peripheralData.id);
@@ -407,14 +407,17 @@ function ControllerScreen(props) {
 
     return (
         <SafeAreaView style={containerStyles.pageContainer}>
+            {/* Hide the status bar (for Android) */}
+            <StatusBar hidden={true}/>
+
             {/* Start Race Modal */}
             <Modal
                 transparent={true}
                 animationType="slide"
                 supportedOrientations={['landscape']}
                 visible={startRaceModalVisible}
-                onRequestClose={() => {setStartRaceModalVisible(false)}}
-                onDismiss={() => {setStartCountdown('')}}
+                onRequestClose={() => {}} // Do nothing, as this is triggered by the nav bar back button on Android
+                onDismiss={() => {setStartCountdown('')}}  // iOS only
             >
                 <View
                     style={{
@@ -493,6 +496,11 @@ function ControllerScreen(props) {
                                         onPress={async () => {
                                             await startRace();
                                             setStartRaceModalVisible(false);
+                                            // Need to handle here because onRequestClose is triggered with the nav bar
+                                            // back button on Android, and onDismiss is iOS only
+                                            if (Platform.OS === 'android') {
+                                                setStartCountdown('');
+                                            }
                                         }}
                                         disabled={!peripherals.get(peripheralData.id).connected}
                                     >
@@ -606,7 +614,10 @@ function ControllerScreen(props) {
                 alignItems: "center",
                 paddingTop: 10,
             }}>
-                <Pressable onPress={() => {setMenuModalVisible(true)}}>
+                <Pressable
+                    style={{marginLeft: (Platform.OS === 'android') ? 50 : 0}}
+                    onPress={() => {setMenuModalVisible(true)}}
+                >
                     <Icon name="menu" size={48} color="black" />
                 </Pressable>
                 <Text

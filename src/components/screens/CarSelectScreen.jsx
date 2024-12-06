@@ -5,7 +5,7 @@ import {
     NativeModules,
     Platform,
     Pressable,
-    SafeAreaView,
+    SafeAreaView, StatusBar,
     Text,
     TouchableHighlight,
     View
@@ -100,8 +100,8 @@ function CarSelectScreen(props) {
     // Event handlers
     // ------------------------------------------------------------------------------------------------------------
     const handleStopScan = () => {
-        setIsScanning(false);
         console.debug('[handleStopScan] scan is stopped.');
+        setIsScanning(false);
     };
 
     const handleDisconnectedPeripheral = (event) => {
@@ -129,6 +129,12 @@ function CarSelectScreen(props) {
             return;
         }
         setPeripherals(map => {return new Map(map.set(peripheral.id, peripheral))});
+    };
+
+    const initScan = async () => {
+        if ((await BleManager.checkState()) === BleState.On) {
+            startScan();
+        }
     };
 
     useFocusEffect(
@@ -162,6 +168,9 @@ function CarSelectScreen(props) {
             ];
             handleAndroidPermissions();
 
+            // BleManager may already be on
+            initScan();
+
             return () => {
                 console.debug('[app] main component unmounting. Removing listeners...');
                 for (const listener of listeners) {
@@ -190,6 +199,9 @@ function CarSelectScreen(props) {
 
     return (
         <SafeAreaView style={scanStyles.body}>
+            {/* Hide the status bar (for Android) */}
+            <StatusBar hidden={true}/>
+
             <Pressable style={scanStyles.scanButton} onPress={startScan}>
                 <Text style={scanStyles.scanButtonText}>
                     {isScanning ? 'Searching...' : 'Find Cars'}
