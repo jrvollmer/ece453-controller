@@ -62,6 +62,7 @@ function CarSelectScreen(props) {
                     .catch((err) => {
                         console.error('[startScan] ble scan returned in error', err);
                     });
+                console.debug('[startScan] Please just reach here');
             }
             catch (error) {
                 console.error('[startScan] ble scan error thrown', error);
@@ -78,7 +79,7 @@ function CarSelectScreen(props) {
             subscribed &&= await subscribeToNotification(peripheral.id, characteristicUUID, SERVICE_UUIDS[0]);
         }
 
-        // Reset lap count when intially connecting to the car
+        // Reset lap count when initially connecting to the car
         await BleManager.writeWithoutResponse(
             peripheralData.id,
             ServiceUUIDs.RCController,
