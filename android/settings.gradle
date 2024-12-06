@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'bucky-kart-controller'
+rootProject.name = 'Bucky Kart'
 
 dependencyResolutionManagement {
   versionCatalogs {

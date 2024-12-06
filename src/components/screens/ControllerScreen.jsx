@@ -1,11 +1,23 @@
 import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {BackHandler, FlatList, Linking, Modal, NativeEventEmitter, NativeModules, Platform, Pressable, SafeAreaView, Text, View} from 'react-native';
+import {
+    BackHandler,
+    FlatList,
+    Modal,
+    NativeEventEmitter,
+    NativeModules,
+    Platform,
+    Pressable,
+    SafeAreaView,
+    StatusBar,
+    Text,
+    View
+} from 'react-native';
 import {useNavigation, useFocusEffect} from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons';
+import BleManager from "react-native-ble-manager";
 
 import {buttonStyles, containerStyles} from "../../styles/DefaultStyles";
 import Controller from "../controller/Controller";
-import BleManager from "react-native-ble-manager";
 import PeripheralsContext from "../../contexts/BlePeripherals";
 import {
     connectPeripheral,
@@ -29,13 +41,13 @@ const LAP_TIME_UPDATE_PERIOD_MS = 10;
 
 // Needed for accessing stateful information within event handlers
 let statelessLap = 0;
+let leaving = false;
 
 
 function ControllerScreen(props) {
     let {
         peripheralData
     } = props.route.params;
-    let leaving = false;
     let reconnecting = false;
 
     const navigation = useNavigation();
@@ -84,9 +96,9 @@ function ControllerScreen(props) {
         if (p && (p.connected || p.connecting)) {
             try {
                 leaving = true;
-                if (p.connected) { // TODO Verify. Added without testing
+                if (p.connected) {
                     for (const c of NOTIFICATION_CHARACTERISTIC_UUIDS) {
-                        await BleManager.stopNotification(peripheralData.id, ServiceUUIDs.RCController, c); // TODO This may be causing issues (or at least be unnecessary)
+                        await BleManager.stopNotification(peripheralData.id, ServiceUUIDs.RCController, c);
                     }
                 }
                 await BleManager.disconnect(peripheralData.id);
@@ -99,16 +111,6 @@ function ControllerScreen(props) {
                     }
                     return map;
                 });
-                // TODO
-                // await sleep(500); // TODO Empirical - needs tuning though
-                // if (Platform.OS === 'android') {
-                //     await BleManager.removeBond(peripheralData.id); // TODO REMOVE and just use the old connect/disconnectt logic
-                // } else {
-                //     // iOS _should_ be able to open Bluetooth settings via prefs:root=Bluetooth (tested works) or
-                //     // App-prefs:Bluetooth (according to most sites), but go figure, it doesn't work with React Native.
-                //     // Instead, it just opens the main settings page, or whatever page you have open in the Settings app
-                //     await Linking.openURL('App-prefs:Bluetooth'); // TODO REMOVE I think that this is messing with the disconnect logic
-                // }
             }
             catch (error) {
                 console.error(`[goBackToCarSelect][${peripheralData.id}] error when trying to disconnect device.`, error);
@@ -122,7 +124,7 @@ function ControllerScreen(props) {
         const ms = t % 1000;
         const sec = Math.floor((t / 1000) % 60);
         const min = Math.floor((t / 60000) % 60);
-        const hr = Math.floor((t / 3600000) % 24); // TODO REMOVE I really hope we don't have hour long laps
+        const hr = Math.floor((t / 3600000) % 24);
 
         const msStr = ms < 10 ? `00${ms}` : (ms < 100 ? `0${ms}` : ms);
         const secStr = sec < 10 ? `0${sec}` : sec;
@@ -271,8 +273,6 @@ function ControllerScreen(props) {
                 for (const listener of bleListeners) {
                     listener.remove();
                 }
-
-                // TODO Disconnect from peripheral here
             }
         }, [])
     );
@@ -407,14 +407,17 @@ function ControllerScreen(props) {
 
     return (
         <SafeAreaView style={containerStyles.pageContainer}>
+            {/* Hide the status bar (for Android) */}
+            <StatusBar hidden={true}/>
+
             {/* Start Race Modal */}
             <Modal
                 transparent={true}
                 animationType="slide"
                 supportedOrientations={['landscape']}
                 visible={startRaceModalVisible}
-                onRequestClose={() => {setStartRaceModalVisible(false)}}
-                onDismiss={() => {setStartCountdown('')}}
+                onRequestClose={() => {}} // Do nothing, as this is triggered by the nav bar back button on Android
+                onDismiss={() => {setStartCountdown('')}}  // iOS only
             >
                 <View
                     style={{
@@ -493,6 +496,11 @@ function ControllerScreen(props) {
                                         onPress={async () => {
                                             await startRace();
                                             setStartRaceModalVisible(false);
+                                            // Need to handle here because onRequestClose is triggered with the nav bar
+                                            // back button on Android, and onDismiss is iOS only
+                                            if (Platform.OS === 'android') {
+                                                setStartCountdown('');
+                                            }
                                         }}
                                         disabled={!peripherals.get(peripheralData.id).connected}
                                     >
@@ -606,7 +614,10 @@ function ControllerScreen(props) {
                 alignItems: "center",
                 paddingTop: 10,
             }}>
-                <Pressable onPress={() => {setMenuModalVisible(true)}}>
+                <Pressable
+                    style={{marginLeft: (Platform.OS === 'android') ? 50 : 0}}
+                    onPress={() => {setMenuModalVisible(true)}}
+                >
                     <Icon name="menu" size={48} color="black" />
                 </Pressable>
                 <Text
